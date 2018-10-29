@@ -239,6 +239,7 @@ Partial Class LGDefault
 
 
   Private Sub LGDefault_PreRender(sender As Object, e As EventArgs) Handles Me.PreRender
+    'comment to check publish
     If Page.User.Identity.IsAuthenticated Then
 
       Dim str As String = ""
