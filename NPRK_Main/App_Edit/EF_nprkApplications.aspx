@@ -45,7 +45,7 @@
             Runat="Server" />
         </td>
         <td class="alignright">
-          <b><asp:Label ID="L_ApplicationID" runat="server" style="display:none" ForeColor="#CC6633" Text="Application ID :" /></b>
+          <b><asp:Label ID="L_ApplicationID" runat="server" ForeColor="#CC6633" Text="Application ID :" /></b>
         </td>
         <td>
           <asp:TextBox ID="F_ApplicationID"
@@ -54,7 +54,7 @@
             Enabled = "False"
             CssClass = "mypktxt"
             Width="88px"
-            style="text-align: right;display:none;"
+            style="text-align: right;"
             runat="server" />
         </td>
       </tr>
@@ -286,7 +286,36 @@
 <div class="pagedata">
 <asp:UpdatePanel ID="UPNLnprkBillDetails" runat="server">
   <ContentTemplate>
-    <table width="100%"><tr><td class="sis_formview"> 
+    <table width="100%">
+      <tr>
+        <td>
+          <div id="F_Upload" runat="server" style="margin:auto;padding:10px 10px 10px 10px;" class="file_upload" visible='<%# BillUploadVisible %>' >
+            <table>
+              <tr>
+                <td colspan="4">
+                  To upload BILL Details through MS-Excel, First Download the Template. Then Upload the updated Excel File.
+                </td>
+              </tr>
+              <tr>
+                <td><b>Step 1.</b>
+                  <asp:Button ID="cmdTemplateDownload" Width="100px" Text="Download" runat="server" ToolTip="Click to download template file." CommandName="Download" CommandArgument='<%# Eval("PrimaryKey") %>' />
+                </td>
+                <td><b>Step 2.</b>
+                </td>
+                <td>
+                    <asp:FileUpload ID="F_FileUpload" runat="server" Width="180px" ToolTip="Click to locate Excel file." />
+                </td>
+                <td>
+                  <asp:Button ID="cmdFileUpload" Text="Upload" runat="server" ToolTip="Click to upload & process template file." CommandName="Upload" CommandArgument="" />
+                </td>
+              </tr>
+            </table>
+          </div>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="sis_formview"> 
     <LGM:ToolBar0 
       ID = "TBLnprkBillDetails"
       ToolType = "lgNMGrid"
@@ -389,43 +418,14 @@
     </asp:ObjectDataSource>
     <br />
   </td></tr>
-<%--      <tr>
-        <td>
-          <div id="F_Upload" runat="server" style="margin:auto;padding:10px 10px 10px 10px;" class="file_upload">
-            <table>
-              <tr>
-                <td colspan="4">
-                  To upload BILL Details through MS-Excel, First Download the Template. Then Upload the updated Excel File.
-                </td>
-              </tr>
-              <tr>
-                <td><b>Step 1.</b>
-                  <asp:Button ID="cmdDownload" CssClass="file_upload_button" Width="100px" Text="Download" runat="server" ToolTip="Click to download template file." CommandName="Download" CommandArgument='<%# Eval("PrimaryKey") %>' />
-                </td>
-                <td><b>Step 2.</b>
-                  <input type="text" id="fileName" style="width: 185px" class="file_input_textbox" readonly="readonly">
-                </td>
-                <td>
-                  <div class="file_input_div">
-                    <input type="button" value="Search"  class="file_input_button" />
-                    <asp:FileUpload ID="F_FileUpload" runat="server" Width="80px" class="file_input_hidden" onchange="document.getElementById('fileName').value = this.value;" ToolTip="Click to locate Excel file." />
-                  </div>
-                </td>
-                <td>
-                  <asp:Button ID="cmdFileUpload" CssClass="file_upload_button" OnClientClick="return this.style.display='none';true;" Text="Upload" runat="server" ToolTip="Click to upload & process template file." CommandName="Upload" CommandArgument="" />
-                </td>
-              </tr>
-            </table>
-          </div>
-
-        </td>
-      </tr>--%>
     </table>
   </ContentTemplate>
   <Triggers>
     <asp:AsyncPostBackTrigger ControlID="GVnprkBillDetails" EventName="PageIndexChanged" />
     <asp:PostBackTrigger ControlID="cmdDownload" />
+    <asp:PostBackTrigger ControlID="cmdTemplateDownload" />
     <asp:PostBackTrigger ControlID="cmdUpload" />
+    <asp:PostBackTrigger ControlID="cmdFileUpload" />
     <asp:PostBackTrigger ControlID="cmdTemplate" />
   </Triggers>
 </asp:UpdatePanel>

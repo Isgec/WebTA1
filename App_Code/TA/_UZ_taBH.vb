@@ -2811,7 +2811,7 @@ Namespace SIS.TA
       oColtaBH.Font.Bold = True
       oRowtaBH.Cells.Add(oColtaBH)
       oColtaBH = New TableCell
-      oColtaBH.Text = oVar.VerificationRemarks
+      oColtaBH.Text = oVar.ApprovalRemarks
       oColtaBH.Style.Add("text-align", "left")
       oColtaBH.ColumnSpan = "2"
       oRowtaBH.Cells.Add(oColtaBH)
@@ -2820,7 +2820,7 @@ Namespace SIS.TA
       oColtaBH.Font.Bold = True
       oRowtaBH.Cells.Add(oColtaBH)
       oColtaBH = New TableCell
-      oColtaBH.Text = oVar.ApprovalRemarks
+      oColtaBH.Text = oVar.CCRemarks
       oColtaBH.Style.Add("text-align", "left")
       oColtaBH.ColumnSpan = "2"
       oRowtaBH.Cells.Add(oColtaBH)

@@ -294,6 +294,26 @@ Namespace SIS.NPRK
       End Using
       Return Results
     End Function
+    Public Shared Function nprkBillDetailsGetByBillNo(ByVal ClaimID As Int32, ByVal ApplicationID As Int32, ByVal BillNo As String) As SIS.NPRK.nprkBillDetails
+      Dim Results As SIS.NPRK.nprkBillDetails = Nothing
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.StoredProcedure
+          Cmd.CommandText = "spnprk_LG_BillDetailsSelectByBillNo"
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ClaimID", SqlDbType.Int, ClaimID.ToString.Length, ClaimID)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ApplicationID", SqlDbType.Int, ApplicationID.ToString.Length, ApplicationID)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@BillNo", SqlDbType.NVarChar, BillNo.Length, BillNo)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LoginID", SqlDbType.NVarChar, 9, HttpContext.Current.Session("LoginID"))
+          Con.Open()
+          Dim Reader As SqlDataReader = Cmd.ExecuteReader()
+          If Reader.Read() Then
+            Results = New SIS.NPRK.nprkBillDetails(Reader)
+          End If
+          Reader.Close()
+        End Using
+      End Using
+      Return Results
+    End Function
     <DataObjectMethod(DataObjectMethodType.Select)>
     Public Shared Function nprkBillDetailsSelectList(ByVal StartRowIndex As Integer, ByVal MaximumRows As Integer, ByVal OrderBy As String, ByVal SearchState As Boolean, ByVal SearchText As String, ByVal ApplicationID As Int32, ByVal ClaimID As Int32) As List(Of SIS.NPRK.nprkBillDetails)
       Dim Results As List(Of SIS.NPRK.nprkBillDetails) = Nothing

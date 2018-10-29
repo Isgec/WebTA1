@@ -59,6 +59,17 @@ Partial Class EF_nprkApplications
       ViewState.Add("PerkID", value)
     End Set
   End Property
+  Public Property BillUploadVisible() As Boolean
+    Get
+      If ViewState("BillUploadVisible") IsNot Nothing Then
+        Return CType(ViewState("BillUploadVisible"), Boolean)
+      End If
+      Return True
+    End Get
+    Set(ByVal value As Boolean)
+      ViewState.Add("BillUploadVisible", value)
+    End Set
+  End Property
   Protected Sub ODSnprkApplications_Selected(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs) Handles ODSnprkApplications.Selected
     Dim tmp As SIS.NPRK.nprkApplications = CType(e.ReturnValue, SIS.NPRK.nprkApplications)
     Editable = tmp.Editable
@@ -66,6 +77,12 @@ Partial Class EF_nprkApplications
     ChildAddable = tmp.ChildAddable
     PrimaryKey = tmp.PrimaryKey
     PerkID = tmp.PerkID
+    BillUploadVisible = False
+    Select Case tmp.PerkID
+      Case prkPerk.VehicleRepairAndRunningExpense
+        BillUploadVisible = True
+    End Select
+
   End Sub
   Protected Sub FVnprkApplications_Init(ByVal sender As Object, ByVal e As System.EventArgs) Handles FVnprkApplications.Init
     DataClassName = "EnprkApplications"
@@ -262,206 +279,285 @@ Partial Class EF_nprkApplications
   Private Sub GVnprkBillDetails_PreRender(sender As Object, e As EventArgs) Handles GVnprkBillDetails.PreRender
     SIS.NPRK.nprkBillDetails.FormatGrid(GVnprkBillDetails, PerkID)
   End Sub
-  ''  Protected Sub cmdDownload_Click(sender As Object, e As System.EventArgs) Handles cmdDownload.Click
-  ''    Dim st As Long = HttpContext.Current.Server.ScriptTimeout
-  ''    HttpContext.Current.Server.ScriptTimeout = Integer.MaxValue
-  ''    Dim oVal() As String = CType(sender, Button).CommandArgument.Split("|".ToCharArray)
-  ''    Dim ClmID As Integer = 0
-  ''    Dim AplID As Integer = 0
-  ''    Try
-  ''      ClmID = oVal(0)
-  ''      AplID = oVal(1)
-  ''    Catch ex As Exception
-  ''      Dim message As String = New JavaScriptSerializer().Serialize("Inalid values received for Template download.")
-  ''      Dim script As String = String.Format("alert({0});", message)
-  ''      ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", script, True)
-  ''      Exit Sub
-  ''    End Try
-  ''    Dim TemplateName As String = "PrkBill_Template.xlsx"
-  ''    Dim tmpFile As String = Server.MapPath("~/App_Templates/" & TemplateName)
-  ''    If IO.File.Exists(tmpFile) Then
-  ''      Dim FileName As String = Server.MapPath("~/..") & "App_Temp/" & Guid.NewGuid().ToString()
-  ''      IO.File.Copy(tmpFile, FileName)
-  ''      Dim FileInfo As IO.FileInfo = New IO.FileInfo(FileName)
-  ''      Dim xlPk As ExcelPackage = New ExcelPackage(FileInfo)
+  Protected Sub cmdDownload_Click(sender As Object, e As System.EventArgs) Handles cmdTemplateDownload.Click
+    Dim st As Long = HttpContext.Current.Server.ScriptTimeout
+    HttpContext.Current.Server.ScriptTimeout = Integer.MaxValue
+    Dim oVal() As String = CType(sender, Button).CommandArgument.Split("|".ToCharArray)
+    Dim ClmID As Integer = 0
+    Dim AplID As Integer = 0
+    Try
+      ClmID = oVal(0)
+      AplID = oVal(1)
+    Catch ex As Exception
+      Dim message As String = New JavaScriptSerializer().Serialize("Inalid values received for Template download.")
+      Dim script As String = String.Format("alert({0});", message)
+      ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", script, True)
+      Exit Sub
+    End Try
+    Dim TemplateName As String = "PrkBill_Template.xlsx"
+    Dim tmpFile As String = Server.MapPath("~/App_Templates/" & TemplateName)
+    If IO.File.Exists(tmpFile) Then
+      Dim FileName As String = Server.MapPath("~/..") & "App_Temp/" & Guid.NewGuid().ToString()
+      IO.File.Copy(tmpFile, FileName)
+      Dim FileInfo As IO.FileInfo = New IO.FileInfo(FileName)
+      Dim xlPk As ExcelPackage = New ExcelPackage(FileInfo)
 
-  ''      '1.
-  ''      Dim r As Integer = 5
-  ''      Dim c As Integer = 1
-  ''      Dim xlWS As ExcelWorksheet = xlPk.Workbook.Worksheets("Bill_Details")
+      '1.
+      Dim r As Integer = 5
+      Dim c As Integer = 1
+      Dim xlWS As ExcelWorksheet = xlPk.Workbook.Worksheets("Bill_Details")
+      'Format XL
 
-  ''      Dim oApl As SIS.NPRK.nprkApplications = SIS.NPRK.nprkApplications.nprkApplicationsGetByID(ClmID, AplID)
-  ''      Dim oBDs As List(Of SIS.NPRK.nprkBillDetails) = SIS.NPRK.nprkBillDetails.UZ_nprkBillDetailsSelectList(0, 999, "", False, "", ClmID, AplID)
+      With xlWS
+        Select Case PerkID
+          Case prkPerk.DriverCharges
 
-  ''      With xlWS
-  ''        .Cells(1, 3).Value = oApl.ClaimID
-  ''        .Cells(2, 3).Value = oApl.ApplicationID
-  ''        .Cells(3, 3).Value = oApl.PRK_Perks7_Description
-  ''        For Each cs As SIS.NPRK.nprkBillDetails In oBDs
-  ''          .Cells(r, 1).Value = cs.AttachmentID
-  ''          .Cells(r, 2).Value = cs.BillNo
-  ''          .Cells(r, 3).Value = cs.BillDate
-  ''          .Cells(r, 4).Value = cs.Particulars
-  ''          .Cells(r, 5).Value = cs.FromDate
-  ''          .Cells(r, 6).Value = cs.ToDate
-  ''          .Cells(r, 7).Value = cs.Quantity
-  ''          .Cells(r, 8).Value = cs.Amount
-  ''          r += 1
-  ''        Next
-  ''      End With
-  ''      xlPk.Save()
-  ''      xlPk.Dispose()
+            .Cells(3, 5).Value = "PERIOD FROM"
+            .Column(2).Hidden = True
+            .Column(3).Hidden = True
+            .Column(4).Hidden = True
+            .Column(7).Hidden = True
+          Case prkPerk.VehicleRepairAndRunningExpense
+            .Column(5).Hidden = True
+            .Column(6).Hidden = True
+            .Column(8).Hidden = True
+          Case prkPerk.Telephone, prkPerk.Mobile
+            .Cells(4, 4).Value = "SUBSCRIBER / PLAN DETAILS"
+            .Cells(3, 5).Value = "PERIOD FROM"
+          Case prkPerk.BalanceMedical, prkPerk.MedicalBenifit
+            .Cells(4, 4).Value = "Doctor / Shop Details"
+            .Column(5).Hidden = True
+            .Column(6).Hidden = True
+            .Column(8).Hidden = True
+          Case prkPerk.Mediclaim, prkPerk.CarInsurance
+            .Cells(4, 2).Value = "POLICY No."
+            .Cells(4, 3).Value = "ISSUE DATE"
+            .Cells(4, 4).Value = "POLICY COMPANY"
+            .Cells(3, 5).Value = "PERIOD"
+            .Cells(4, 6).Value = "PREMIUM PAID"
+            .Column(8).Hidden = True
+          Case prkPerk.Uniform
+            .Cells(4, 4).Value = "ITEM & SHOP DETAILS"
+            .Column(5).Hidden = True
+            .Column(6).Hidden = True
+            .Column(8).Hidden = True
+          Case prkPerk.NewspaperMagazine
+            .Cells(4, 4).Value = "MAGAZINE/BOOK & VENDOR DETAILS"
+            .Column(5).Hidden = True
+            .Column(6).Hidden = True
+            .Column(8).Hidden = True
+          Case prkPerk.EntertainmentExp
+            .Cells(4, 4).Value = "EXPENSE DETAILS"
+            .Column(2).Hidden = True
+            .Column(3).Hidden = True
+            .Column(5).Hidden = True
+            .Column(6).Hidden = True
+            .Column(7).Hidden = True
+        End Select
+      End With
 
-  ''      Response.Clear()
-  ''      Response.AppendHeader("content-disposition", "attachment; filename=BillList_" & ClmID & "_" & AplID & "_Template.xlsx")
-  ''      Response.ContentType = SIS.SYS.Utilities.ApplicationSpacific.ContentType(TemplateName)
-  ''      Response.WriteFile(FileName)
-  ''      HttpContext.Current.Server.ScriptTimeout = st
-  ''      Response.End()
-  ''    End If
 
-  ''  End Sub
-  ''  Private Sub cmdFileUpdate_Click(sender As Object, e As EventArgs) Handles cmdFileUpload.Click
-  ''    Dim st As Long = HttpContext.Current.Server.ScriptTimeout
-  ''    HttpContext.Current.Server.ScriptTimeout = Integer.MaxValue
-  ''    Try
-  ''      With F_FileUpload
-  ''        If .HasFile Then
-  ''          Dim tmpPath As String = Server.MapPath("~/../App_Temp")
-  ''          Dim tmpName As String = IO.Path.GetRandomFileName()
-  ''          Dim tmpFile As String = tmpPath & "\\" & tmpName
-  ''          .SaveAs(tmpFile)
-  ''          Dim fi As FileInfo = New FileInfo(tmpFile)
-  ''          Using xlP As ExcelPackage = New ExcelPackage(fi)
-  ''            Dim wsD As ExcelWorksheet = Nothing
-  ''            Try
-  ''              wsD = xlP.Workbook.Worksheets("Bill_Details")
-  ''              Dim clmID As Integer = 0
-  ''              Dim aplID As Integer = 0
-  ''              Try
-  ''                clmID = wsD.Cells(1, 3).Text
-  ''                aplID = wsD.Cells(2, 3).Text
-  ''              Catch ex As Exception
-  ''                Dim message As String = New JavaScriptSerializer().Serialize("Inalid values found in uploaded Excel.")
-  ''                Dim script As String = String.Format("alert({0});", message)
-  ''                ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", script, True)
-  ''                Exit Sub
-  ''              End Try
-  ''              Dim userID As String = HttpContext.Current.Session("LoginID")
-  ''              Dim oClm As SIS.NPRK.nprkUserClaims = SIS.NPRK.nprkUserClaims.nprkUserClaimsGetByID(clmID)
-  ''              Dim oApl As SIS.NPRK.nprkApplications = SIS.NPRK.nprkApplications.nprkApplicationsGetByID(clmID, aplID)
-  ''              Dim Err As Boolean = False
-  ''              '1. 
-  ''              If oClm.CardNo <> userID Then
-  ''                Err = True
-  ''                wsD.Cells(1, 5).Value = "Claim does not belongs to logged in user."
-  ''              End If
-  ''              '2. 
-  ''              Select Case oClm.ClaimStatusID
-  ''                Case prkClaimStates.Free, prkClaimStates.ReturnedByAccounts
-  ''                Case Else
-  ''                  Err = True
-  ''                  wsD.Cells(2, 5).Value = "Claim is submitted for processing."
-  ''              End Select
-  ''              If Not Err Then
-  ''                Dim r As Integer = 5
-  ''                Dim ClaimedAmt As Decimal = 0
-  ''                Try
-  ''                  ClaimedAmt = wsD.Cells(r, 8).Text
-  ''                Catch ex As Exception
-  ''                  ClaimedAmt = 0
-  ''                End Try
-  ''                Do While ClaimedAmt > 0
-  ''                  Dim athID As String = ""
-  ''                  athID = wsD.Cells(r, 1).Text
-  ''                  Dim oAth As SIS.NPRK.nprkBillDetails = Nothing
-  ''                  Dim Found As Boolean = False
-  ''                  If athID <> String.Empty Then
-  ''                    Try
-  ''                      oAth = SIS.NPRK.nprkBillDetails.nprkBillDetailsGetByID(clmID, aplID, athID)
-  ''                    Catch ex As Exception
-  ''                    End Try
-  ''                  End If
-  ''                  If oAth IsNot Nothing Then
-  ''                    Found = True
-  ''                  Else
-  ''                    oAth = New SIS.NPRK.nprkBillDetails
-  ''                  End If
-  ''                  With oAth
-  ''                    .ClaimID = clmID
-  ''                    .ApplicationID = aplID
-  ''                    Try
-  ''                      .BillNo = wsD.Cells(r, 2).Text
-  ''                    Catch ex As Exception
-  ''                    End Try
-  ''                    Try
-  ''                      .BillDate = wsD.Cells(r, 3).Text
-  ''                    Catch ex As Exception
-  ''                    End Try
-  ''                    Try
-  ''                      .Particulars = wsD.Cells(r, 4).Text
-  ''                    Catch ex As Exception
-  ''                    End Try
-  ''                    Try
-  ''                      .FromDate = wsD.Cells(r, 5).Text
-  ''                    Catch ex As Exception
-  ''                    End Try
-  ''                    Try
-  ''                      .ToDate = wsD.Cells(r, 6).Text
-  ''                    Catch ex As Exception
-  ''                    End Try
-  ''                    Try
-  ''                      .Quantity = wsD.Cells(r, 7).Text
-  ''                    Catch ex As Exception
-  ''                    End Try
-  ''                    .Amount = ClaimedAmt
-  ''                  End With
-  ''                  Try
-  ''                    If Found Then
-  ''                      SIS.NPRK.nprkBillDetails.UZ_nprkBillDetailsUpdate(oAth)
-  ''                    Else
-  ''                      oAth = SIS.NPRK.nprkBillDetails.UZ_nprkBillDetailsInsert(oAth)
-  ''                      wsD.Cells(r, 1).Value = oAth.AttachmentID
-  ''                    End If
-  ''                  Catch ex As Exception
-  ''                    wsD.Cells(r, 9).Value = ex.Message
-  ''                  End Try
-  ''                  r += 1
-  ''                  Try
-  ''                    ClaimedAmt = wsD.Cells(r, 8).Text
-  ''                  Catch ex As Exception
-  ''                    ClaimedAmt = 0
-  ''                  End Try
-  ''                Loop
-  ''              End If
-  ''            Catch en As Exception
-  ''              Dim message As String = New JavaScriptSerializer().Serialize(en.Message)
-  ''              Dim script As String = String.Format("alert({0});", message)
-  ''              ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", script, True)
-  ''              Exit Sub
-  ''            End Try
-  ''            xlP.Save()
-  ''            xlP.Dispose()
-  ''          End Using
-  ''          Dim FileNameForUser As String = F_FileUpload.FileName
-  ''          If IO.File.Exists(tmpFile) Then
-  ''            Response.Clear()
-  ''            Response.AppendHeader("content-disposition", "attachment; filename=" & FileNameForUser)
-  ''            Response.ContentType = SIS.SYS.Utilities.ApplicationSpacific.ContentType(FileNameForUser)
-  ''            Response.WriteFile(tmpFile)
-  ''            HttpContext.Current.Server.ScriptTimeout = st
-  ''            Response.End()
-  ''          End If
-  ''        End If
-  ''      End With
-  ''    Catch ex As Exception
-  ''      HttpContext.Current.Server.ScriptTimeout = st
-  ''      Dim message As String = New JavaScriptSerializer().Serialize(ex.Message.ToString())
-  ''      Dim script As String = String.Format("alert({0});", message)
-  ''      ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", script, True)
-  ''    End Try
-  ''over:
+      Dim oApl As SIS.NPRK.nprkApplications = SIS.NPRK.nprkApplications.nprkApplicationsGetByID(ClmID, AplID)
+      Dim oBDs As List(Of SIS.NPRK.nprkBillDetails) = SIS.NPRK.nprkBillDetails.UZ_nprkBillDetailsSelectList(0, 999, "", False, "", ClmID, AplID)
 
-  ''  End Sub
+      With xlWS
+        .Cells(1, 3).Value = oApl.ClaimID
+        .Cells(2, 3).Value = oApl.ApplicationID
+        .Cells(3, 3).Value = oApl.PRK_Perks7_Description
+        For Each cs As SIS.NPRK.nprkBillDetails In oBDs
+          .Cells(r, 1).Value = cs.AttachmentID
+          .Cells(r, 2).Value = cs.BillNo
+          .Cells(r, 3).Value = cs.BillDate
+          .Cells(r, 4).Value = cs.Particulars
+          .Cells(r, 5).Value = cs.FromDate
+          .Cells(r, 6).Value = cs.ToDate
+          .Cells(r, 7).Value = cs.Quantity
+          .Cells(r, 8).Value = cs.Amount
+          r += 1
+        Next
+      End With
+      xlPk.Save()
+      xlPk.Dispose()
+
+      Response.Clear()
+      Response.AppendHeader("content-disposition", "attachment; filename=PerkBillList_" & ClmID & "_" & AplID & ".xlsx")
+      Response.ContentType = SIS.SYS.Utilities.ApplicationSpacific.ContentType(TemplateName)
+      Response.WriteFile(FileName)
+      HttpContext.Current.Server.ScriptTimeout = st
+
+      Response.End()
+    End If
+
+  End Sub
+  Private Sub cmdFileUpload_Click(sender As Object, e As EventArgs) Handles cmdFileUpload.Click
+    Dim st As Long = HttpContext.Current.Server.ScriptTimeout
+    HttpContext.Current.Server.ScriptTimeout = Integer.MaxValue
+    Try
+      With F_FileUpload
+        If .HasFile Then
+          Dim tmpPath As String = Server.MapPath("~/../App_Temp")
+          Dim tmpName As String = IO.Path.GetRandomFileName()
+          Dim tmpFile As String = tmpPath & "\\" & tmpName
+          .SaveAs(tmpFile)
+          Dim fi As FileInfo = New FileInfo(tmpFile)
+          Using xlP As ExcelPackage = New ExcelPackage(fi)
+            Dim wsD As ExcelWorksheet = Nothing
+            Try
+              wsD = xlP.Workbook.Worksheets("Bill_Details")
+              Dim clmID As Integer = 0
+              Dim aplID As Integer = 0
+              Try
+                clmID = wsD.Cells(1, 3).Text
+                aplID = wsD.Cells(2, 3).Text
+              Catch ex As Exception
+                Dim message As String = New JavaScriptSerializer().Serialize("Inalid values found in uploaded Excel.")
+                Dim script As String = String.Format("alert({0});", message)
+                ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", script, True)
+                Exit Sub
+              End Try
+              Dim userID As String = HttpContext.Current.Session("LoginID")
+              Dim oClm As SIS.NPRK.nprkUserClaims = SIS.NPRK.nprkUserClaims.nprkUserClaimsGetByID(clmID)
+              Dim oApl As SIS.NPRK.nprkApplications = SIS.NPRK.nprkApplications.nprkApplicationsGetByID(clmID, aplID)
+              Dim Err As Boolean = False
+              '1. 
+              If oClm.CardNo <> userID Then
+                Err = True
+                wsD.Cells(1, 5).Value = "Claim does not belongs to logged in user."
+              End If
+              '2. 
+              Select Case oClm.ClaimStatusID
+                Case prkClaimStates.Free, prkClaimStates.ReturnedByAccounts
+                Case Else
+                  Err = True
+                  wsD.Cells(2, 5).Value = "Claim is submitted for processing."
+              End Select
+              If Not Err Then
+                Dim r As Integer = 5
+                Dim ClaimedAmt As Decimal = 0
+                Dim BillAmt As Decimal = 0
+                Try
+                  BillAmt = wsD.Cells(r, 7).Text
+                Catch ex As Exception
+                  BillAmt = 0
+                End Try
+                Try
+                  ClaimedAmt = wsD.Cells(r, 8).Text
+                Catch ex As Exception
+                  ClaimedAmt = 0
+                End Try
+                Dim IsUpdated As Boolean = False
+                Do While BillAmt + ClaimedAmt > 0
+                  IsUpdated = True
+                  Dim athID As String = ""
+                  Dim BillNo As String = ""
+
+                  athID = wsD.Cells(r, 1).Text
+                  BillNo = wsD.Cells(r, 2).Text
+                  Dim oAth As SIS.NPRK.nprkBillDetails = Nothing
+                  Dim Found As Boolean = False
+                  If athID <> String.Empty Then
+                    Try
+                      oAth = SIS.NPRK.nprkBillDetails.nprkBillDetailsGetByID(clmID, aplID, athID)
+                    Catch ex As Exception
+                    End Try
+                  Else
+                    'Check for reupload of same file, search by Bill No
+                    Select Case oApl.PerkID
+                      Case prkPerk.VehicleRepairAndRunningExpense
+                        If BillNo <> "" Then
+                          oAth = SIS.NPRK.nprkBillDetails.nprkBillDetailsGetByBillNo(clmID, aplID, BillNo)
+                        Else
+                          GoTo ReadNext
+                        End If
+                    End Select
+                  End If
+                  If oAth IsNot Nothing Then
+                    Found = True
+                  Else
+                    oAth = New SIS.NPRK.nprkBillDetails
+                  End If
+                  With oAth
+                    .ClaimID = clmID
+                    .ApplicationID = aplID
+                    Try
+                      .BillNo = wsD.Cells(r, 2).Text
+                    Catch ex As Exception
+                    End Try
+                    Try
+                      .BillDate = wsD.Cells(r, 3).Text
+                    Catch ex As Exception
+                    End Try
+                    Try
+                      .Particulars = wsD.Cells(r, 4).Text
+                    Catch ex As Exception
+                    End Try
+                    Try
+                      .FromDate = wsD.Cells(r, 5).Text
+                    Catch ex As Exception
+                    End Try
+                    Try
+                      .ToDate = wsD.Cells(r, 6).Text
+                    Catch ex As Exception
+                    End Try
+                    .Quantity = BillAmt
+                    .Amount = ClaimedAmt
+                  End With
+                  Try
+                    If Found Then
+                      SIS.NPRK.nprkBillDetails.UZ_nprkBillDetailsUpdate(oAth)
+                    Else
+                      oAth = SIS.NPRK.nprkBillDetails.UZ_nprkBillDetailsInsert(oAth)
+                      wsD.Cells(r, 1).Value = oAth.AttachmentID
+                    End If
+                  Catch ex As Exception
+                    wsD.Cells(r, 9).Value = ex.Message
+                  End Try
+ReadNext:
+                  r += 1
+                  Try
+                    BillAmt = wsD.Cells(r, 7).Text
+                  Catch ex As Exception
+                    BillAmt = 0
+                  End Try
+                  Try
+                    ClaimedAmt = wsD.Cells(r, 8).Text
+                  Catch ex As Exception
+                    ClaimedAmt = 0
+                  End Try
+                Loop
+                If IsUpdated Then
+                  SIS.NPRK.nprkUserClaims.ValidateClaim(clmID)
+                End If
+              End If
+            Catch en As Exception
+              Dim message As String = New JavaScriptSerializer().Serialize(en.Message)
+              Dim script As String = String.Format("alert({0});", message)
+              ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", script, True)
+              Exit Sub
+            End Try
+            xlP.Save()
+            xlP.Dispose()
+          End Using
+          GVnprkBillDetails.DataBind()
+          ''Dim FileNameForUser As String = F_FileUpload.FileName
+          ''If IO.File.Exists(tmpFile) Then
+          ''  Response.Clear()
+          ''  Response.AppendHeader("content-disposition", "attachment; filename=" & FileNameForUser)
+          ''  Response.ContentType = SIS.SYS.Utilities.ApplicationSpacific.ContentType(FileNameForUser)
+          ''  Response.WriteFile(tmpFile)
+          ''  HttpContext.Current.Server.ScriptTimeout = st
+          ''  Response.End()
+          ''End If
+        End If
+      End With
+    Catch ex As Exception
+      HttpContext.Current.Server.ScriptTimeout = st
+      Dim message As String = New JavaScriptSerializer().Serialize(ex.Message.ToString())
+      Dim script As String = String.Format("alert({0});", message)
+      ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", script, True)
+    End Try
+over:
+
+  End Sub
 
 End Class

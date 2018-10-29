@@ -20,25 +20,31 @@ Namespace SIS.TA
     End Property
     Public ReadOnly Property IsDomestic As Boolean
       Get
-        Dim mRet As Boolean = True
+        Select Case FK_TA_BillDetails_TABillNo.TravelTypeID
+          Case TATravelTypeValues.Domestic, TATravelTypeValues.HomeVisit
+            Return True
+        End Select
         If FK_TA_BillDetails_City1ID IsNot Nothing Then
-          If FK_TA_BillDetails_City1ID.RegionTypeID.ToLower = "domestic" Then
-            mRet = True
-          Else
-            mRet = False
-          End If
-        Else
-          If FK_TA_BillDetails_TABillNo IsNot Nothing Then
-            If FK_TA_BillDetails_TABillNo.TravelTypeID = TATravelTypeValues.Domestic Then
-              mRet = True
-            Else
-              mRet = False
-            End If
-          Else
-            mRet = True
+          If FK_TA_BillDetails_City1ID.RegionTypeID.ToLower = "Foreign" Then
+            Return False
           End If
         End If
-        Return mRet
+        If FK_TA_BillDetails_City2ID IsNot Nothing Then
+          If FK_TA_BillDetails_City2ID.RegionTypeID.ToLower = "Foreign" Then
+            Return False
+          End If
+        End If
+        If FK_TA_BillDetails_Country1ID IsNot Nothing Then
+          If FK_TA_BillDetails_Country1ID.RegionTypeID.ToLower = "Foreign" Then
+            Return False
+          End If
+        End If
+        If FK_TA_BillDetails_Country2ID IsNot Nothing Then
+          If FK_TA_BillDetails_Country2ID.RegionTypeID = "Foreign" Then
+            Return False
+          End If
+        End If
+        Return True
       End Get
     End Property
     Public Sub New(ByVal TABillNo As Integer, ByVal SerialNo As Integer)
