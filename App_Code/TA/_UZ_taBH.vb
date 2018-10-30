@@ -1209,7 +1209,7 @@ Namespace SIS.TA
       Else
         Dim CityTypeForDA As String = "OTHERS"
         Dim RegionID As String = "Others"
-        If sBill.TravelTypeID = TATravelTypeValues.Domestic Or sTmp.IsDomestic Then
+        If sBill.TravelTypeID = TATravelTypeValues.Domestic Or sBill.IsDomestic Then
           Dim tmp As SIS.TA.taD_SwrDA = SIS.TA.taD_SwrDA.GetByCategoryID(Convert.ToInt32(sBill.TACategoryID), CityTypeForDA, Convert.ToDateTime(sBill.StartDateTime, ci))
           If tmp IsNot Nothing Then
             sTmp.AmountRate = tmp.HotelStayDA
@@ -1376,7 +1376,7 @@ Namespace SIS.TA
             Else
               RegionID = sTmp.FK_TA_BillDetails_City1ID.RegionID
             End If
-            If sBill.TravelTypeID = TATravelTypeValues.Domestic Or sTmp.IsDomestic Then
+            If sBill.TravelTypeID = TATravelTypeValues.Domestic Or sBill.IsDomestic Then
               If sTmp.StayedInHotel Then
                 Dim tmp As SIS.TA.taD_SwrDA = SIS.TA.taD_SwrDA.GetByCategoryID(Convert.ToInt32(sBill.TACategoryID), CityTypeForDA, Convert.ToDateTime(sBill.StartDateTime, ci))
                 If tmp IsNot Nothing Then
@@ -2001,12 +2001,46 @@ Namespace SIS.TA
     End Sub
 
 #End Region
+    Public Property IsDomestic As Boolean = True
 #Region " VALIDATE TA BILL MAIN FUNCTION "
     Public Shared Sub ValidateTABill(ByVal TABillNo As Integer)
       InitializeTABill(TABillNo)
       Dim ci As System.Globalization.CultureInfo = SIS.SYS.Utilities.SessionManager.ci
       Dim sBill As SIS.TA.taBH = SIS.TA.taBH.taBHGetByID(TABillNo)
       Dim sTmps As List(Of SIS.TA.taBillDetails) = SIS.TA.taBillDetails.taBillDetailsSelectList(0, 999, "", False, "", TABillNo)
+      '0=Check IsDomestic at Bill Level
+      Select Case sBill.TravelTypeID
+        Case TATravelTypeValues.Domestic, TATravelTypeValues.HomeVisit
+          sBill.IsDomestic = True
+        Case Else
+          For Each sTmp As SIS.TA.taBillDetails In sTmps
+            If sTmp.FK_TA_BillDetails_City1ID IsNot Nothing Then
+              If sTmp.FK_TA_BillDetails_City1ID.RegionTypeID.ToLower = "Foreign" Then
+                sBill.IsDomestic = False
+                Exit For
+              End If
+            End If
+            If sTmp.FK_TA_BillDetails_City2ID IsNot Nothing Then
+              If sTmp.FK_TA_BillDetails_City2ID.RegionTypeID.ToLower = "Foreign" Then
+                sBill.IsDomestic = False
+                Exit For
+              End If
+            End If
+            If sTmp.FK_TA_BillDetails_Country1ID IsNot Nothing Then
+              If sTmp.FK_TA_BillDetails_Country1ID.RegionTypeID.ToLower = "Foreign" Then
+                sBill.IsDomestic = False
+                Exit For
+              End If
+            End If
+            If sTmp.FK_TA_BillDetails_Country2ID IsNot Nothing Then
+              If sTmp.FK_TA_BillDetails_Country2ID.RegionTypeID = "Foreign" Then
+                sBill.IsDomestic = False
+                Exit For
+              End If
+            End If
+          Next
+      End Select
+
       '1. Validate Fare Record for Travel Mode. NO Dependancy
       ValidateFare(sBill, sTmps)
       '2. Validate Lodging before DA Calculation
