@@ -2014,30 +2014,33 @@ Namespace SIS.TA
           sBill.IsDomestic = True
         Case Else
           For Each sTmp As SIS.TA.taBillDetails In sTmps
-            If sTmp.FK_TA_BillDetails_City1ID IsNot Nothing Then
-              If sTmp.FK_TA_BillDetails_City1ID.RegionTypeID.ToLower = "Foreign" Then
-                sBill.IsDomestic = False
-                Exit For
-              End If
-            End If
-            If sTmp.FK_TA_BillDetails_City2ID IsNot Nothing Then
-              If sTmp.FK_TA_BillDetails_City2ID.RegionTypeID.ToLower = "Foreign" Then
-                sBill.IsDomestic = False
-                Exit For
-              End If
-            End If
-            If sTmp.FK_TA_BillDetails_Country1ID IsNot Nothing Then
-              If sTmp.FK_TA_BillDetails_Country1ID.RegionTypeID.ToLower = "Foreign" Then
-                sBill.IsDomestic = False
-                Exit For
-              End If
-            End If
-            If sTmp.FK_TA_BillDetails_Country2ID IsNot Nothing Then
-              If sTmp.FK_TA_BillDetails_Country2ID.RegionTypeID = "Foreign" Then
-                sBill.IsDomestic = False
-                Exit For
-              End If
-            End If
+            Select Case sTmp.ComponentID
+              Case TAComponentTypes.Fare, TAComponentTypes.Lodging
+                If sTmp.FK_TA_BillDetails_City1ID IsNot Nothing Then
+                  If sTmp.FK_TA_BillDetails_City1ID.RegionTypeID.ToLower = "foreign" Then
+                    sBill.IsDomestic = False
+                    Exit For
+                  End If
+                End If
+                If sTmp.FK_TA_BillDetails_City2ID IsNot Nothing Then
+                  If sTmp.FK_TA_BillDetails_City2ID.RegionTypeID.ToLower = "foreign" Then
+                    sBill.IsDomestic = False
+                    Exit For
+                  End If
+                End If
+                If sTmp.FK_TA_BillDetails_Country1ID IsNot Nothing Then
+                  If sTmp.FK_TA_BillDetails_Country1ID.RegionTypeID.ToLower = "foreign" Then
+                    sBill.IsDomestic = False
+                    Exit For
+                  End If
+                End If
+                If sTmp.FK_TA_BillDetails_Country2ID IsNot Nothing Then
+                  If sTmp.FK_TA_BillDetails_Country2ID.RegionTypeID.ToLower = "foreign" Then
+                    sBill.IsDomestic = False
+                    Exit For
+                  End If
+                End If
+            End Select
           Next
       End Select
 

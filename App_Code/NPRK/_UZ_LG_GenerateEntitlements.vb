@@ -124,8 +124,26 @@ Namespace SIS.NPRK.Utilities
             Continue For
         End Select
         If PerkID > 0 Then If oPrk.PerkID <> PerkID Then Continue For
-        DeletePerks(EmpID, fDt, oFinYear.EndDate, oPrk.PerkID)
+        Dim driverEnt As New List(Of SIS.NPRK.nprkEntitlements)
+        If oPrk.PerkID = prkPerk.DriverCharges Then
+          driverEnt = SIS.NPRK.nprkEntitlements.GetByEmployeeIDPerkID(EmpID, oPrk.PerkID)
+        End If
         Dim oRngs As List(Of SIS.NPRK.Utilities.ProcessRange) = SIS.NPRK.Utilities.ProcessRange.GetProcessRange(oEmp, fDt, tDt, oPrk.PerkID, oFinYear)
+        If oPrk.PerkID <> prkPerk.DriverCharges Then
+          DeletePerks(EmpID, fDt, oFinYear.EndDate, oPrk.PerkID)
+        Else
+          'Delete Only for Its Process Range
+          Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString)
+            Con.Open()
+            For Each oRng As ProcessRange In oRngs
+              Using Cmd As SqlCommand = Con.CreateCommand()
+                Cmd.CommandType = System.Data.CommandType.Text
+                Cmd.CommandText = "delete prk_entitlements where month(effectivedate)=" & oRng.LastDate.Month & " and year(effectivedate)=" & oRng.LastDate.Year & " and finyear='" & oRng.FinYear & "' and perkid=" & oPrk.PerkID & " and employeeid=" & EmpID
+                Cmd.ExecuteNonQuery()
+              End Using
+            Next
+          End Using
+        End If
         For Each oRng As ProcessRange In oRngs
           '====ProtoType of Next Logic
           'If Not oRng.LastRecord Then
@@ -158,6 +176,15 @@ Namespace SIS.NPRK.Utilities
             .VehicleType = oRng.VehicleType
             .Value = oRng.PerkValue
           End With
+          If oPrk.PerkID = prkPerk.DriverCharges Then
+            For Each de As SIS.NPRK.nprkEntitlements In driverEnt
+              If de.EffectiveDate = oEnt.EffectiveDate Then
+                oEnt.Value = de.Value
+                oEnt.WithDriver = de.WithDriver
+                oEnt.Selected = de.Selected
+              End If
+            Next
+          End If
           If Not oRng.LastRecord Then
             oEnt = SIS.NPRK.nprkEntitlements.InsertData(oEnt)
           Else 'If Last Record
@@ -201,6 +228,15 @@ Namespace SIS.NPRK.Utilities
                         .VehicleType = oaRng.VehicleType
                         .Value = oaRng.PerkValue
                       End With
+                      If oPrk.PerkID = prkPerk.DriverCharges Then
+                        For Each de As SIS.NPRK.nprkEntitlements In driverEnt
+                          If de.EffectiveDate = osEnt.EffectiveDate Then
+                            osEnt.Value = de.Value
+                            osEnt.WithDriver = de.WithDriver
+                            osEnt.Selected = de.Selected
+                          End If
+                        Next
+                      End If
                       osEnt = SIS.NPRK.nprkEntitlements.InsertData(osEnt)
                     Next
                   End If
@@ -239,6 +275,15 @@ Namespace SIS.NPRK.Utilities
                         .VehicleType = oaRng.VehicleType
                         .Value = oaRng.PerkValue
                       End With
+                      If oPrk.PerkID = prkPerk.DriverCharges Then
+                        For Each de As SIS.NPRK.nprkEntitlements In driverEnt
+                          If de.EffectiveDate = osEnt.EffectiveDate Then
+                            osEnt.Value = de.Value
+                            osEnt.WithDriver = de.WithDriver
+                            osEnt.Selected = de.Selected
+                          End If
+                        Next
+                      End If
                       osEnt = SIS.NPRK.nprkEntitlements.InsertData(osEnt)
                     Next
                   End If 'End of Resigned case with in Locked Months
@@ -257,7 +302,7 @@ Namespace SIS.NPRK.Utilities
       'Subtract OBP Created in 19 from Total Payable
       Dim tmp As Decimal = 0
       'Get Paid in MedicalBenefit + OPB Created in Medical Balance
-      tmp = SIS.NPRK.nprkLedger.GetPaidMedBenfitWithADJinBalMed(oEmp.EmployeeID)
+      'tmp = SIS.NPRK.nprkLedger.GetPaidMedBenfitWithADJinBalMed(oEmp.EmployeeID)
       TotalMedical = TotalMedical - tmp
       If oEmp.VehicleType <> "None" Then
         Dim TotOthers As Decimal = 0
@@ -281,7 +326,6 @@ Namespace SIS.NPRK.Utilities
           .FinYear = HttpContext.Current.Session("FinYear")
           .PerkID = prkPerk.VehicleRepairAndRunningExpense
           .UOM = .FK_PRK_Entitlements_PRK_Perks.UOM
-
 
           .Description = "For Qtr. starting from " & fDt
           .EffectiveDate = fDt

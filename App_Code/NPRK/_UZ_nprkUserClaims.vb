@@ -347,6 +347,8 @@ Namespace SIS.NPRK
       For Each tmp As SIS.NPRK.nprkApplications In oClaimApplications
         Dim oBills As List(Of SIS.NPRK.nprkBillDetails) = SIS.NPRK.nprkBillDetails.UZ_nprkBillDetailsSelectList(0, 9999, "", False, "", tmp.ClaimID, tmp.ApplicationID)
         For Each tm As SIS.NPRK.nprkBillDetails In oBills
+          If tm.Amount = 0 Then tm.Amount = tm.Quantity
+          If tm.Quantity = 0 Then tm.Quantity = tm.Amount
           With tmp
             .Value += tm.Amount
             .VerifiedValue += tm.Quantity
