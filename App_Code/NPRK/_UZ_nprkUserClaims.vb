@@ -151,7 +151,10 @@ Namespace SIS.NPRK
         End Using
       End Using
       If mCount >= 3 Then
-        Throw New Exception("Only 3 Claims can be submitted in a Quarter.")
+        Dim AllowedList As String = ConfigurationManager.AppSettings("NoLimitClaimSubmit")
+        If Not AllowedList.IndexOf(Results.CardNo) >= 0 Then
+          Throw New Exception("Only 3 Claims can be submitted in a Quarter.")
+        End If
       End If
       Dim LogBookRequired As Boolean = False
       Dim oEmp As SIS.NPRK.nprkEmployees = SIS.NPRK.nprkEmployees.GetByCardNo(Results.CardNo)
