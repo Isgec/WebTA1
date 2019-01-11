@@ -540,9 +540,6 @@ Public Class csGLMain
     Dim L_glNatureID As Integer = 0
     Dim tmpCount As Integer = glMain.xlStartRow
     Dim completed As Boolean = False
-    'Dim xlPk As ExcelPackage = New ExcelPackage(FileInfo)
-    'Dim xlWS As ExcelWorksheet = xlPk.Workbook.Worksheets("CSN")
-
     For Each tmp As csGLGroup In glMain.ListGLGroups
       If L_glNatureID <> tmp.glNatureID Then
         If L_glNatureID = 0 Then
@@ -610,11 +607,6 @@ Public Class csGLMain
       .Cells(r, 1, r, 2).Style.HorizontalAlignment = HorizontalAlign.Center
 
       Dim tmp As csGLGroup = Nothing
-      Dim uur As Integer = 0
-      'Dim uur As Integer
-      'Dim xlPk As ExcelPackage = ExcelPackage(glMain)
-      'Dim xlWS As ExcelWorksheet =
-      'Dim xlWSN As ExcelWorksheet = glMain.Workbook.Worksheets("CSN")
       For Each tmp In glMain.ListGLGroups
         If lNature <> tmp.glNatureDescription Then
           .Cells(glMain.xlSalesTotalRow, 2).Value = "Total of ""A"""
@@ -622,20 +614,8 @@ Public Class csGLMain
           For Each tmpAmt As csGLGroup.csYearAmount In tmp.ListYearAmounts
             r = glMain.xlSalesTotalRow
             If tmpAmt.IsCurrent Then
-
-              'If glMain.xlSalesHeadingtRow = 16 Then
-              'uur = glMain.xlSalesHeadingtRow + 1
-              'End If
-
-
-              'If tmp.glGroupID = 51 Then
-              '  uur = tmpAmt.xlPCell
-              'xlWSN.Cells(4, 6).Formula = "CS!" & "G" & uur
-              '  xlWSN.Cells(4, 6).Style.Font.Bold = True
-              'End If
               .Cells(r, tmpAmt.xlACol).Formula = "sum(" & tmpAmt.xlACell & glMain.xlSalesHeadingtRow + 1 & ":" & tmpAmt.xlACell & glMain.xlSalesTotalRow - 1 & ")"
               .Cells(r, tmpAmt.xlPCol).Formula = "sum(" & tmpAmt.xlPCell & glMain.xlSalesHeadingtRow + 1 & ":" & tmpAmt.xlPCell & glMain.xlSalesTotalRow - 1 & ")"
-
               .Cells(r, tmpAmt.xlBCol).Formula = "sum(" & tmpAmt.xlBCell & glMain.xlSalesHeadingtRow + 1 & ":" & tmpAmt.xlBCell & glMain.xlSalesTotalRow - 1 & ")"
             Else
               .Cells(r, tmpAmt.xlACol).Formula = "sum(" & tmpAmt.xlACell & glMain.xlSalesHeadingtRow + 1 & ":" & tmpAmt.xlACell & glMain.xlSalesTotalRow - 1 & ")"
@@ -740,13 +720,6 @@ Public Class csGLMain
     End If
     Dim FileInfo As IO.FileInfo = New IO.FileInfo(FileName)
     Dim xlPk As ExcelPackage = New ExcelPackage(FileInfo)
-
-    '<~~HK
-
-    Dim xlWSN As ExcelWorksheet = xlPk.Workbook.Worksheets("CSN")
-    Dim r_n As Integer = 1
-    Dim c_n As Integer = 1
-    '~~HK>
     'One Try Block from Here
     Dim xlWS As ExcelWorksheet = xlPk.Workbook.Worksheets("CS")
 
@@ -811,8 +784,6 @@ Public Class csGLMain
       .Cells(r, 1, r, 2).Style.HorizontalAlignment = HorizontalAlign.Center
 
       Dim tmp As csGLGroup = Nothing
-      Dim ffsy As Integer = 0
-      Dim uur As Integer = 0
       For Each tmp In glMain.ListGLGroups
         If lNature <> tmp.glNatureDescription Then
           .Cells(glMain.xlSalesTotalRow, 2).Value = "Total of ""A"""
@@ -820,20 +791,6 @@ Public Class csGLMain
           For Each tmpAmt As csGLGroup.csYearAmount In tmp.ListYearAmounts
             r = glMain.xlSalesTotalRow
             If tmpAmt.IsCurrent Then
-
-
-              'If glMain.xlSalesHeadingtRow = 16 Then
-              '  uur = glMain.xlSalesHeadingtRow + 1
-              'End If
-
-
-
-              'If tmpAmt.glGroup.glGroupID = "51" Then
-              '  uur = glMain.xlSalesHeadingtRow
-              '  xlWSN.Cells(4, 5).Formula = "Unbilled/Un-earned(-)  Revenue"
-              '  xlWSN.Cells(4, 6).Formula = "CS!" & "G" & uur
-              '  xlWSN.Cells(4, 6).Style.Font.Bold = True
-              'End If
               .Cells(r, tmpAmt.xlACol).Formula = "sum(" & tmpAmt.xlACell & glMain.xlSalesHeadingtRow + 1 & ":" & tmpAmt.xlACell & glMain.xlSalesTotalRow - 1 & ")"
               .Cells(r, tmpAmt.xlPCol).Formula = "sum(" & tmpAmt.xlPCell & glMain.xlSalesHeadingtRow + 1 & ":" & tmpAmt.xlPCell & glMain.xlSalesTotalRow - 1 & ")"
               .Cells(r, tmpAmt.xlBCol).Formula = "sum(" & tmpAmt.xlBCell & glMain.xlSalesHeadingtRow + 1 & ":" & tmpAmt.xlBCell & glMain.xlSalesTotalRow - 1 & ")"
@@ -857,14 +814,6 @@ Public Class csGLMain
         .Cells(tmp.xlRow, 2).Value = tmp.glGroupDescription
         For Each tm As csGLGroup.csYearAmount In tmp.ListYearAmounts
           If tm.IsCurrent Then
-
-            If tmp.glGroupID = "7" Then
-              ffsy = tmp.xlRow
-            End If
-
-
-
-
             If tmp.glGroupID = "47" Then 'WARANTY
               .Cells(tmp.xlRow, tm.xlBCol).Value = tm.BeforeProvision * -1
               .Cells(tmp.xlRow, tm.xlPCol).Value = tm.Provision * -1
@@ -881,9 +830,6 @@ Public Class csGLMain
               .Cells(tmp.xlRow, tm.xlACol).Value = tm.AfterProvision * -1
               '.Cells(tmp.xlRow, tm.xlACol).Value = tm.glGroup.AfterProvisionForWaranty(tm.FinYear)
             Else
-              If tmp.glGroupID = "51" Then
-                uur = tmp.xlRow
-              End If
               .Cells(tmp.xlRow, tm.xlACol).Value = tm.AfterProvision * IIf(lNature = "SALES", -1, 1)
             End If
           End If
@@ -905,43 +851,13 @@ Public Class csGLMain
         If tm.IsCurrent Then
           .Cells(r, tm.xlBCol).Formula = "sum(" & tm.xlBCell & glMain.xlCostHeadingRow + 1 & ":" & tm.xlBCell & r - 1 & ")"
           .Cells(r, tm.xlBCol).Style.Border.BorderAround(Style.ExcelBorderStyle.Thin)
-
-
-
           .Cells(r, tm.xlPCol).Formula = "sum(" & tm.xlPCell & glMain.xlCostHeadingRow + 1 & ":" & tm.xlPCell & r - 1 & ")"
           .Cells(r, tm.xlPCol).Style.Border.BorderAround(Style.ExcelBorderStyle.Thin)
-
-
-
           .Cells(r, tm.xlACol).Formula = "sum(" & tm.xlACell & glMain.xlCostHeadingRow + 1 & ":" & tm.xlACell & r - 1 & ")"
           .Cells(r, tm.xlACol).Style.Border.BorderAround(Style.ExcelBorderStyle.Thin)
-
-
-
         Else
-
           .Cells(r, tm.xlACol).Formula = "sum(" & tm.xlACell & glMain.xlCostHeadingRow + 1 & ":" & tm.xlACell & r - 1 & ")"
           .Cells(r, tm.xlACol).Style.Border.BorderAround(Style.ExcelBorderStyle.Thin)
-
-          '<~~HK
-          xlWSN.Cells(1, 5).Value = "Total of ""B""" & "  YTD"
-          xlWSN.Cells(1, 5).Style.Font.Bold = True
-          xlWSN.Cells(1, 6).Formula = "sum(" & "CS!" & "G" & glMain.xlCostHeadingRow + 1 & ":" & "G" & r - 1 & ")"
-          xlWSN.Cells(1, 6).Style.Border.BorderAround(Style.ExcelBorderStyle.Thin)
-          xlWSN.Cells(1, 6).Style.Font.Bold = True
-          xlWSN.Cells(1, 8).Formula = "CSN!" & "F1" & "/" & "100000"
-
-          xlWSN.Cells(2, 5).Value = "Forex Fluctuations-Sale YTD"
-          xlWSN.Cells(2, 5).Style.Font.Bold = True
-          xlWSN.Cells(2, 6).Formula = "CS!" & "G" & ffsy
-          xlWSN.Cells(2, 6).Style.Font.Bold = True
-          xlWSN.Cells(2, 8).Formula = "=IFERROR" & "(" & "F2" & "/" & "100000" & "," & "0" & ")"
-          xlWSN.Cells(4, 5).Value = "Unbilled/Un-earned(-) Revenue"
-          xlWSN.Cells(4, 5).Style.Font.Bold = True
-          xlWSN.Cells(4, 6).Formula = "CS!" & "G" & uur
-          xlWSN.Cells(4, 6).Style.Font.Bold = True
-          xlWSN.Cells(4, 8).Formula = "CSN!" & "F4" & "/" & "100000"
-          '~~HK>
         End If
       Next
       .Cells(r, 2, r, glMain.xlLastDataCol).Style.Font.Bold = True
@@ -963,11 +879,6 @@ Public Class csGLMain
           .Cells(r, tm.xlACol).Style.Border.BorderAround(Style.ExcelBorderStyle.Thin)
         Else
           .Cells(r, tm.xlACol).Formula = tm.xlACell & glMain.xlSalesTotalRow & "-" & tm.xlACell & glMain.xlCostTotalRow
-          xlWSN.Cells(3, 5).Value = "Gross Margin (A-B)"
-          xlWSN.Cells(3, 5).Style.Font.Bold = True
-          xlWSN.Cells(3, 6).Formula = "CS!" & tm.xlACell & glMain.xlSalesTotalRow & "-" & "CS!" & tm.xlACell & glMain.xlCostTotalRow
-          xlWSN.Cells(3, 6).Style.Font.Bold = True
-          xlWSN.Cells(3, 8).Formula = "CSN!" & "F3" & "/" & "100000"
           .Cells(r, tm.xlACol).Style.Border.BorderAround(Style.ExcelBorderStyle.Thin)
         End If
       Next
@@ -979,7 +890,6 @@ Public Class csGLMain
       'Print Cost Table
       Dim r_ct As Integer = glMain.xlGrossMarginRow + 2
       Dim c_ct As Integer = glMain.xlStartDataCol - 1
-
       'Immediate Last Year
       Dim LastYear As Integer = FinYear - 1
       Dim bkdTot As Decimal = 0
@@ -1116,7 +1026,7 @@ Public Class csGLMain
       'write table
       .Cells(r_ct, c_ct + 1).Value = "Total"
       .Cells(r_ct, c_ct + 2).Value = "Bkd. upto F " & LastYear
-      .Cells(r_ct, c_ct + 3).Value = "Bal. On Apr'" & LastYear
+      .Cells(r_ct, c_ct + 3).Value = "Bal. on Apr'" & LastYear
       .Cells(r_ct, c_ct + 4).Value = "Bkd. F " & FinYear
       .Cells(r_ct, c_ct + 5).Value = "Yet to Book"
       .Cells(r_ct + 1, c_ct).Value = "Sales"
@@ -1202,175 +1112,69 @@ Public Class csGLMain
         'Row for Calculation Of Order Value Table
         Dim r_ov As Integer = r_ct + tmpR
         Dim c_ov As Integer = c_ct + 3
-
         '------------------------------
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Booked Last Year"
         .Cells(r_ct + tmpR, c_ct + 1).Value = bkdTot
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Booked Last Year"
-        xlWSN.Cells(r_n, c_n + 1).Value = bkdTot
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Booked Curr Year"
         .Cells(r_ct + tmpR, c_ct + 1).Value = bkdTotc
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Booked Curr Year"
-        xlWSN.Cells(r_n, c_n + 1).Value = bkdTotc
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Booked YTD"
         .Cells(r_ct + tmpR, c_ct + 1).Value = bkdYTD
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Booked YTD"
-        xlWSN.Cells(r_n, c_n + 1).Value = bkdYTD
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Booked Last Year FC"
         .Cells(r_ct + tmpR, c_ct + 1).Value = bkdTotFC
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Booked Last Year FC"
-        xlWSN.Cells(r_n, c_n + 1).Value = bkdTotFC
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Booked Curr Year FC"
         .Cells(r_ct + tmpR, c_ct + 1).Value = bkdTotcFC
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Booked Curr Year FC"
-        xlWSN.Cells(r_n, c_n + 1).Value = bkdTotcFC
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Booked YTD FC"
         .Cells(r_ct + tmpR, c_ct + 1).Value = bkdYTDFC
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Booked YTD FC"
-        xlWSN.Cells(r_n, c_n + 1).Value = bkdYTDFC
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Order Val FC"
         .Cells(r_ct + tmpR, c_ct + 1).Value = ordVal
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Order Val FC"
-        xlWSN.Cells(r_n, c_n + 1).Value = ordVal
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Avg. Conversion Factor"
         .Cells(r_ct + tmpR, c_ct + 1).Value = avgCon
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Avg. Conversion Factor"
-        xlWSN.Cells(r_n, c_n + 1).Value = avgCon
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Booked to Bill FC"
         .Cells(r_ct + tmpR, c_ct + 1).Value = bkdBillFC
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Booked to Bill FC"
-        xlWSN.Cells(r_n, c_n + 1).Value = bkdBillFC
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Booked to Bill INR"
         .Cells(r_ct + tmpR, c_ct + 1).Value = bkdBill
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Booked to Bill INR"
-        xlWSN.Cells(r_n, c_n + 1).Value = bkdBill
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Project Revenue INR"
         .Cells(r_ct + tmpR, c_ct + 1).Value = prRevn
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Project Revenue INR"
-        xlWSN.Cells(r_n, c_n + 1).Value = prRevn
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Margin Project INR"
         .Cells(r_ct + tmpR, c_ct + 1).Value = marPr
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Margin Project INR"
-        xlWSN.Cells(r_n, c_n + 1).Value = marPr
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Margin Last Year INR"
         .Cells(r_ct + tmpR, c_ct + 1).Value = marLYr
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Margin Last Year INR"
-        xlWSN.Cells(r_n, c_n + 1).Value = marLYr
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Booked Balance INR"
         .Cells(r_ct + tmpR, c_ct + 1).Value = bkdBal
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Booked Balance INR"
-        xlWSN.Cells(r_n, c_n + 1).Value = bkdBal
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Margin Balance INR"
         .Cells(r_ct + tmpR, c_ct + 1).Value = marBal
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Margin Balance INR"
-        xlWSN.Cells(r_n, c_n + 1).Value = marBal
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Booked Margin Current Year"
         .Cells(r_ct + tmpR, c_ct + 1).Value = bkdMarc
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Booked Margin Current Year"
-        xlWSN.Cells(r_n, c_n + 1).Value = bkdMarc
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Export Incentive Project Input"
         .Cells(r_ct + tmpR, c_ct + 1).Value = expIPI
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Export Incentive Project Input"
-        xlWSN.Cells(r_n, c_n + 1).Value = expIPI
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Export Incentive Last Year"
         .Cells(r_ct + tmpR, c_ct + 1).Value = exITot
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Export Incentive Last Year"
-        xlWSN.Cells(r_n, c_n + 1).Value = exITot
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Balance Export Inventive"
         .Cells(r_ct + tmpR, c_ct + 1).Value = expIBal
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Balance Export Inventive"
-        xlWSN.Cells(r_n, c_n + 1).Value = expIBal
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Export Incentive Current Year"
         .Cells(r_ct + tmpR, c_ct + 1).Value = exITotc
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Export Incentive Current Year"
-        xlWSN.Cells(r_n, c_n + 1).Value = exITotc
-        r_n += 1
-        '~~HK>
         tmpR += 1
         .Cells(r_ct + tmpR, c_ct + 0).Value = "Export Incentive To Be Booked"
         .Cells(r_ct + tmpR, c_ct + 1).Value = expToBkd
-        '<~~HK
-        xlWSN.Cells(r_n, c_n).Value = "Export Incentive To Be Booked"
-        xlWSN.Cells(r_n, c_n + 1).Value = expToBkd
-        r_n += 1
-        '~~HK>
         tmpR += 1
         'Print Calculation of Order Value Table
         '======================================

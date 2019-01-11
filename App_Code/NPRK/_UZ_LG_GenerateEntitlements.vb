@@ -175,6 +175,8 @@ Namespace SIS.NPRK.Utilities
             .PostedAt = oRng.PostedAt
             .VehicleType = oRng.VehicleType
             .Value = oRng.PerkValue
+            .ForDays = oRng.Days
+            .AdditionalValue = oRng.AdditionalValue
           End With
           If oPrk.PerkID = prkPerk.DriverCharges Then
             For Each de As SIS.NPRK.nprkEntitlements In driverEnt
@@ -182,6 +184,11 @@ Namespace SIS.NPRK.Utilities
                 oEnt.Value = de.Value
                 oEnt.WithDriver = de.WithDriver
                 oEnt.Selected = de.Selected
+                If de.WithDriver Then
+                  If oEnt.AdditionalValue > 0 Then
+                    oEnt.Value = oRng.PerkValue + oRng.AdditionalValue
+                  End If
+                End If
               End If
             Next
           End If
@@ -227,6 +234,8 @@ Namespace SIS.NPRK.Utilities
                         .PostedAt = oaRng.PostedAt
                         .VehicleType = oaRng.VehicleType
                         .Value = oaRng.PerkValue
+                        .ForDays = oaRng.Days
+                        .AdditionalValue = oaRng.AdditionalValue
                       End With
                       If oPrk.PerkID = prkPerk.DriverCharges Then
                         For Each de As SIS.NPRK.nprkEntitlements In driverEnt
@@ -234,6 +243,11 @@ Namespace SIS.NPRK.Utilities
                             osEnt.Value = de.Value
                             osEnt.WithDriver = de.WithDriver
                             osEnt.Selected = de.Selected
+                            If de.WithDriver Then
+                              If osEnt.AdditionalValue > 0 Then
+                                osEnt.Value = oaRng.PerkValue + oaRng.AdditionalValue
+                              End If
+                            End If
                           End If
                         Next
                       End If
@@ -274,6 +288,8 @@ Namespace SIS.NPRK.Utilities
                         .PostedAt = oaRng.PostedAt
                         .VehicleType = oaRng.VehicleType
                         .Value = oaRng.PerkValue
+                        .ForDays = oaRng.Days
+                        .AdditionalValue = oaRng.AdditionalValue
                       End With
                       If oPrk.PerkID = prkPerk.DriverCharges Then
                         For Each de As SIS.NPRK.nprkEntitlements In driverEnt
@@ -281,6 +297,11 @@ Namespace SIS.NPRK.Utilities
                             osEnt.Value = de.Value
                             osEnt.WithDriver = de.WithDriver
                             osEnt.Selected = de.Selected
+                            If de.WithDriver Then
+                              If osEnt.AdditionalValue > 0 Then
+                                osEnt.Value = oaRng.PerkValue + oaRng.AdditionalValue
+                              End If
+                            End If
                           End If
                         Next
                       End If
@@ -475,6 +496,7 @@ CleanUp:
     Public Property FinYear As Integer = 0
     Public Property PetrolRate As Decimal = 1.0
     Public Property WithDriver As Boolean = False
+    Public Property AdditionalValue As Decimal = 0.00
     Public Shared Function GetProcessRange(ByVal oEmp As SIS.NPRK.nprkEmployees, ByVal FDt As DateTime, ByVal TDt As DateTime, ByVal PerkID As Integer, ByVal oFinYear As SIS.NPRK.nprkFinYears) As List(Of ProcessRange)
       Dim aPRng As List(Of ProcessRange) = New List(Of ProcessRange)
       Dim taEmp As SIS.TA.taEmployees = SIS.TA.taEmployees.taEmployeesGetByID(oEmp.CardNo)
@@ -589,25 +611,36 @@ CleanUp:
         'Derive Range value
         Dim mValue As Double = 0
         Dim mDayValue As Double = 0
+        Dim mAddValue As Double = 0
+        Dim mAddDayValue As Double = 0
         If oRul.PercentageOfBasic Then
           mValue = (oRng.Basic * oRul.Percentage) / 100
+          mAddValue = (oRng.Basic * oRul.AdditionalValue) / 100
           If oRng.DaysBasis Then
             If Not oRng.IsFASBasic Then
               mDayValue = mValue / oRng.DaysInMonth
               oRng.PerkValue = oRng.Days * mDayValue
+              mAddDayValue = mAddValue / oRng.DaysInMonth
+              oRng.AdditionalValue = oRng.Days * mAddDayValue
             Else
               oRng.PerkValue = mValue
+              oRng.AdditionalValue = mAddValue
             End If
           Else
             oRng.PerkValue = mValue
+            oRng.AdditionalValue = mAddValue
           End If
         Else
           mValue = oRul.FixedValue
+          mAddValue = oRul.AdditionalValue
           If oRng.DaysBasis Then
             mDayValue = mValue / oRng.DaysInMonth
             oRng.PerkValue = oRng.Days * mDayValue
+            mAddDayValue = mAddValue / oRng.DaysInMonth
+            oRng.AdditionalValue = oRng.Days * mAddDayValue
           Else
             oRng.PerkValue = mValue
+            oRng.AdditionalValue = mAddValue
           End If
         End If
         'If ESI is there then, Medical Benefit will be zero, irrrespective of Emp category

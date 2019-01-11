@@ -175,13 +175,14 @@ Namespace SIS.NPRK
       If Rec.WithDriver Then
         If Verified <> "YES" Then
           Dim apl As SIS.NPRK.nprkApplications = SIS.NPRK.nprkApplications.nprkApplicationsGetByID(ClaimID, ApplicationID)
-          apl.VerifiedValue -= 1500
-          apl.VerifiedAmt -= 1500
-          apl.ApprovedAmt -= 1500
-          apl.ApprovedValue -= 1500
+          Dim tmpEnt As SIS.NPRK.nprkEntitlements = SIS.NPRK.nprkEntitlements.nprkEntitlementsGetByID(Rec.EntitlementID)
+          apl.VerifiedValue -= tmpEnt.AdditionalValue
+          apl.VerifiedAmt -= tmpEnt.AdditionalValue
+          apl.ApprovedAmt -= tmpEnt.AdditionalValue
+          apl.ApprovedValue -= tmpEnt.AdditionalValue
           SIS.NPRK.nprkApplications.UpdateData(apl)
           Dim clm As SIS.NPRK.nprkUserClaims = SIS.NPRK.nprkUserClaims.nprkUserClaimsGetByID(ClaimID)
-          clm.PassedAmount -= 1500
+          clm.PassedAmount -= tmpEnt.AdditionalValue
           SIS.NPRK.nprkUserClaims.UpdateData(clm)
         End If
       End If
@@ -220,17 +221,17 @@ Namespace SIS.NPRK
             Dim tmpEnt As SIS.NPRK.nprkEntitlements = SIS.NPRK.nprkEntitlements.nprkEntitlementsGetByID(_Rec.EntitlementID)
             If _Rec.WithDriver = Record.WithDriver Then
             ElseIf Not _Rec.WithDriver And Record.WithDriver Then
-              _Rec.Quantity += 1500
-              _Rec.Amount += 1500
+              _Rec.Quantity += tmpEnt.AdditionalValue
+              _Rec.Amount += tmpEnt.AdditionalValue
               _Rec.WithDriver = True
-              tmpEnt.Value += 1500
+              tmpEnt.Value += tmpEnt.AdditionalValue
               tmpEnt.WithDriver = True
               SIS.NPRK.nprkEntitlements.UpdateData(tmpEnt)
             ElseIf _Rec.WithDriver And Not Record.WithDriver Then
-              _Rec.Quantity -= 1500
-              _Rec.Amount -= 1500
+              _Rec.Quantity -= tmpEnt.AdditionalValue
+              _Rec.Amount -= tmpEnt.AdditionalValue
               _Rec.WithDriver = False
-              tmpEnt.Value -= 1500
+              tmpEnt.Value -= tmpEnt.AdditionalValue
               tmpEnt.WithDriver = False
               SIS.NPRK.nprkEntitlements.UpdateData(tmpEnt)
             End If

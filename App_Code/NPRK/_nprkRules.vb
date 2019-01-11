@@ -22,6 +22,7 @@ Namespace SIS.NPRK
     Private _PRK_Perks2_Description As String = ""
     Private _FK_PRK_Rules_PRK_Categories As SIS.NPRK.nprkCategories = Nothing
     Private _FK_PRK_Rules_PRK_Perks As SIS.NPRK.nprkPerks = Nothing
+    Public Property AdditionalValue As Decimal = 0
     Public ReadOnly Property ForeColor() As System.Drawing.Color
       Get
         Dim mRet As System.Drawing.Color = Drawing.Color.Blue
@@ -332,6 +333,7 @@ Namespace SIS.NPRK
         .VehicleType = Record.VehicleType
         .InSalary = Record.InSalary
         .WithDriver = Record.WithDriver
+        .AdditionalValue = Record.AdditionalValue
       End With
       Return SIS.NPRK.nprkRules.InsertData(_Rec)
     End Function
@@ -350,6 +352,7 @@ Namespace SIS.NPRK
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@VehicleType",SqlDbType.NVarChar,21, Record.VehicleType)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@InSalary",SqlDbType.Bit,3, Record.InSalary)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@WithDriver", SqlDbType.Bit, 3, Record.WithDriver)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@AdditionalValue", SqlDbType.Decimal, 13, Record.AdditionalValue)
           Cmd.Parameters.Add("@Return_RuleID", SqlDbType.Int, 11)
           Cmd.Parameters("@Return_RuleID").Direction = ParameterDirection.Output
           Con.Open()
@@ -373,6 +376,7 @@ Namespace SIS.NPRK
         .VehicleType = Record.VehicleType
         .InSalary = Record.InSalary
         .WithDriver = Record.WithDriver
+        .AdditionalValue = Record.AdditionalValue
       End With
       Return SIS.NPRK.nprkRules.UpdateData(_Rec)
     End Function
@@ -392,6 +396,7 @@ Namespace SIS.NPRK
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@VehicleType",SqlDbType.NVarChar,21, Record.VehicleType)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@InSalary",SqlDbType.Bit,3, Record.InSalary)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@WithDriver", SqlDbType.Bit, 3, Record.WithDriver)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@AdditionalValue", SqlDbType.Decimal, 13, Record.AdditionalValue)
           Cmd.Parameters.Add("@RowCount", SqlDbType.Int)
           Cmd.Parameters("@RowCount").Direction = ParameterDirection.Output
           _RecordCount = -1

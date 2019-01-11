@@ -59,24 +59,24 @@ Namespace SIS.NPRK
       End With
       Return sender
     End Function
-    <DataObjectMethod(DataObjectMethodType.Select)>
-    Public Shared Function GetLatestRulesByCategoryID(ByVal CategoryID As Int32) As List(Of SIS.NPRK.nprkRules)
-      Dim Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
-      Dim Cmd As SqlCommand = Con.CreateCommand()
-      Cmd.CommandType = CommandType.StoredProcedure
-      Cmd.CommandText = "spPrk_LG_RulesSelectByCategoryID"
-      SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CategoryID", SqlDbType.Int, CategoryID.ToString.Length, CategoryID)
-      Dim Results As List(Of SIS.NPRK.nprkRules) = New List(Of SIS.NPRK.nprkRules)()
-      Using Con
-        Con.Open()
-        Dim Reader As SqlDataReader = Cmd.ExecuteReader()
-        While (Reader.Read())
-          Results.Add(New SIS.NPRK.nprkRules(Reader))
-        End While
-        Reader.Close()
-      End Using
-      Return Results
-    End Function
+    '<DataObjectMethod(DataObjectMethodType.Select)>
+    'Public Shared Function GetLatestRulesByCategoryID(ByVal CategoryID As Int32) As List(Of SIS.NPRK.nprkRules)
+    '  Dim Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+    '  Dim Cmd As SqlCommand = Con.CreateCommand()
+    '  Cmd.CommandType = CommandType.StoredProcedure
+    '  Cmd.CommandText = "spPrk_LG_RulesSelectByCategoryID"
+    '  SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CategoryID", SqlDbType.Int, CategoryID.ToString.Length, CategoryID)
+    '  Dim Results As List(Of SIS.NPRK.nprkRules) = New List(Of SIS.NPRK.nprkRules)()
+    '  Using Con
+    '    Con.Open()
+    '    Dim Reader As SqlDataReader = Cmd.ExecuteReader()
+    '    While (Reader.Read())
+    '      Results.Add(New SIS.NPRK.nprkRules(Reader))
+    '    End While
+    '    Reader.Close()
+    '  End Using
+    '  Return Results
+    'End Function
     Public Shared Function GetLatestRulesByCategoryIDPerkID(ByVal CategoryID As Int32, ByVal PerkID As Integer, ByVal StartDate As DateTime) As List(Of SIS.NPRK.nprkRules)
       Dim Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
       Dim Cmd As SqlCommand = Con.CreateCommand()

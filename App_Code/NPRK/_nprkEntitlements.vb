@@ -23,6 +23,8 @@ Namespace SIS.NPRK
     Private _Description As String = ""
     Public Property Selected As Boolean = False
     Public Property Paid As Boolean = False
+    Public Property AdditionalValue As Decimal = 0
+    Public Property ForDays As Integer = 0
     Private _PRK_Categories1_Description As String = ""
     Private _PRK_Employees2_EmployeeName As String = ""
     Private _PRK_FinYears3_Description As String = ""
@@ -421,6 +423,8 @@ Namespace SIS.NPRK
         .Description = Record.Description
         .Selected = Record.Selected
         .Paid = Record.Paid
+        .AdditionalValue = Record.AdditionalValue
+        .ForDays = Record.ForDays
       End With
       Return SIS.NPRK.nprkEntitlements.InsertData(_Rec)
     End Function
@@ -444,6 +448,8 @@ Namespace SIS.NPRK
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Description", SqlDbType.NVarChar, 100, IIf(Record.Description = "", Convert.DBNull, Record.Description))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Selected", SqlDbType.Bit, 3, Record.Selected)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Paid", SqlDbType.Bit, 3, Record.Paid)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ForDays", SqlDbType.Int, 11, Record.ForDays)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@AdditionalValue", SqlDbType.Decimal, 13, Record.AdditionalValue)
           Cmd.Parameters.Add("@Return_EntitlementID", SqlDbType.Int, 11)
           Cmd.Parameters("@Return_EntitlementID").Direction = ParameterDirection.Output
           Con.Open()
@@ -472,6 +478,8 @@ Namespace SIS.NPRK
         .Description = Record.Description
         .Selected = Record.Selected
         .Paid = Record.Paid
+        .AdditionalValue = Record.AdditionalValue
+        .ForDays = Record.ForDays
       End With
       Return SIS.NPRK.nprkEntitlements.UpdateData(_Rec)
     End Function
@@ -496,6 +504,8 @@ Namespace SIS.NPRK
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Description", SqlDbType.NVarChar, 100, IIf(Record.Description = "", Convert.DBNull, Record.Description))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Selected", SqlDbType.Bit, 3, Record.Selected)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Paid", SqlDbType.Bit, 3, Record.Paid)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ForDays", SqlDbType.Int, 11, Record.ForDays)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@AdditionalValue", SqlDbType.Decimal, 13, Record.AdditionalValue)
           Cmd.Parameters.Add("@RowCount", SqlDbType.Int)
           Cmd.Parameters("@RowCount").Direction = ParameterDirection.Output
           _RecordCount = -1

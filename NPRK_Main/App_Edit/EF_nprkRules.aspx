@@ -285,6 +285,32 @@
         </td>
       </tr>
       <tr><td colspan="4" style="border-top: solid 1pt LightGrey" ></td></tr>
+      <tr>
+        <td class="alignright">
+          <asp:Label ID="Label1" runat="server" Text="Additional Value :" /><span style="color:red">*</span>
+        </td>
+        <td colspan="3">
+          <asp:TextBox ID="F_AdditionalValue"
+            Text='<%# Bind("AdditionalValue") %>'
+            style="text-align: right"
+            Width="104px"
+            CssClass = "mytxt"
+            ValidationGroup= "nprkRules"
+            MaxLength="12"
+            onfocus = "return this.select();"
+            onblur ="return dc(this,2);"
+            runat="server" />
+          <asp:RequiredFieldValidator 
+            ID = "RFVF_AdditionalValue"
+            runat = "server"
+            ControlToValidate = "F_AdditionalValue"
+            ErrorMessage = "<div class='errorLG'>Required!</div>"
+            Display = "Dynamic"
+            EnableClientScript = "true"
+            ValidationGroup = "nprkRules"
+            SetFocusOnError="true" />
+        </td>
+      </tr>
     </table>
   </div>
   </EditItemTemplate>

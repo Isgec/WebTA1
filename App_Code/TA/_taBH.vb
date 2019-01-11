@@ -136,6 +136,7 @@ Namespace SIS.TA
     Public Property VCHBatch As String = ""
     Public Property VCHDocument As String = ""
     Public Property VCHLine As String = ""
+    Public Property ERPYear As String = ""
     Public ReadOnly Property ForeColor() As System.Drawing.Color
       Get
         Dim mRet As System.Drawing.Color = Drawing.Color.Blue
@@ -1958,6 +1959,7 @@ Namespace SIS.TA
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@VCHBatch", SqlDbType.NVarChar, 51, IIf(Record.VCHBatch = "", Convert.DBNull, Record.VCHBatch))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@VCHDocument", SqlDbType.NVarChar, 51, IIf(Record.VCHDocument = "", Convert.DBNull, Record.VCHDocument))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@VCHLine", SqlDbType.NVarChar, 51, IIf(Record.VCHLine = "", Convert.DBNull, Record.VCHLine))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ERPYear", SqlDbType.NVarChar, 51, IIf(Record.ERPYear = "", Convert.DBNull, Record.ERPYear))
           Cmd.Parameters.Add("@Return_TABillNo", SqlDbType.Int, 11)
           Cmd.Parameters("@Return_TABillNo").Direction = ParameterDirection.Output
           Con.Open()
@@ -2088,6 +2090,7 @@ Namespace SIS.TA
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@VCHBatch", SqlDbType.NVarChar, 51, IIf(Record.VCHBatch = "", Convert.DBNull, Record.VCHBatch))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@VCHDocument", SqlDbType.NVarChar, 51, IIf(Record.VCHDocument = "", Convert.DBNull, Record.VCHDocument))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@VCHLine", SqlDbType.NVarChar, 51, IIf(Record.VCHLine = "", Convert.DBNull, Record.VCHLine))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ERPYear", SqlDbType.NVarChar, 51, IIf(Record.ERPYear = "", Convert.DBNull, Record.ERPYear))
           Cmd.Parameters.Add("@RowCount", SqlDbType.Int)
           Cmd.Parameters("@RowCount").Direction = ParameterDirection.Output
           _RecordCount = -1

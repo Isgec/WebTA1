@@ -101,11 +101,25 @@ Namespace SIS.TA
           .PostedOn = .VCHOn
           .ERPBatchNo = vchR.VoucherType & "," & vchR.VoucherCompany
           .ERPDocumentNo = vchR.DocumentNo
+          'Get Fiscal Year From ERP
+          .ERPYear = GetFiscalYear(.VCHBatch)
         End With
         SIS.TA.taCH.UpdateData(Results)
         Return Results
       End If
       Return Nothing
+    End Function
+    Public Shared Function GetFiscalYear(ByVal BatchNo As Integer) As String
+      Dim Results As String = ""
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetBaaNConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.Text
+          Cmd.CommandText = "select max(t_year) from ttfgld100200 where t_btno=" & BatchNo
+          Con.Open()
+          Results = Cmd.ExecuteScalar
+        End Using
+      End Using
+      Return Results
     End Function
 
     Public Shadows ReadOnly Property Editable As Boolean

@@ -62,7 +62,7 @@ Namespace SIS.TA
       Results = SIS.TA.taBH.UpdateData(Results)
       Return Results
       Try
-        SendEMail(Results)
+        Dim tmp As String = SendEMail(Results)
       Catch ex As Exception
       End Try
     End Function

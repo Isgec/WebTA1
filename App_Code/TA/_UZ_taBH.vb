@@ -2595,6 +2595,7 @@ Namespace SIS.TA
           Case TATravelTypeValues.HomeVisit
             .Text = "HOME VISIT EXPENSE STATEMENT"
         End Select
+        If oVar.ERPYear <> "" Then .Text = .Text & " -FY: " & oVar.ERPYear
         .Style.Add("text-align", "center")
         .Font.Size = FontUnit.Point(14)
         If Not oVar.FK_TA_Bills_EmployeeID.TASelfApproval Then
