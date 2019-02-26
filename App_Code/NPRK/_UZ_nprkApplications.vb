@@ -154,8 +154,14 @@ Namespace SIS.NPRK
       Return Record
     End Function
     Public Shared Function UZ_nprkApplicationsUpdate(ByVal Record As SIS.NPRK.nprkApplications) As SIS.NPRK.nprkApplications
-      Dim _Result As SIS.NPRK.nprkApplications = nprkApplicationsUpdate(Record)
-      Return _Result
+      Dim _Rec As SIS.NPRK.nprkApplications = SIS.NPRK.nprkApplications.nprkApplicationsGetByID(Record.ClaimID, Record.ApplicationID)
+      With _Rec
+        .PerkID = Record.PerkID
+      End With
+      _Rec = SIS.NPRK.nprkApplications.UpdateData(_Rec)
+      Return _Rec
+      'Dim _Result As SIS.NPRK.nprkApplications = nprkApplicationsUpdate(Record)
+      'Return _Result
     End Function
     Public Shared Function UZ_nprkApplicationsDelete(ByVal Record As SIS.NPRK.nprkApplications) As Integer
       Dim _Result As Integer = nprkApplicationsDelete(Record)
