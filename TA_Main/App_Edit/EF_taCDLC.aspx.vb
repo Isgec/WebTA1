@@ -33,11 +33,44 @@ Partial Class EF_taCDLC
       ViewState.Add("PrimaryKey", value)
     End Set
   End Property
+  Public Property IsForeign As Boolean
+    Get
+      If ViewState("IsForeign") IsNot Nothing Then
+        Return Convert.ToBoolean(ViewState("IsForeign"))
+      End If
+      Return False
+    End Get
+    Set(value As Boolean)
+      ViewState.Add("IsForeign", value)
+    End Set
+  End Property
+  Public Property TravelStarted As String
+    Get
+      If ViewState("TravelStarted") IsNot Nothing Then
+        Return Convert.ToString(ViewState("TravelStarted"))
+      End If
+      Return Now.ToString("dd/MM/yyyy")
+    End Get
+    Set(value As String)
+      ViewState.Add("TravelStarted", value)
+    End Set
+  End Property
   Protected Sub ODStaCDLC_Selected(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs) Handles ODStaCDLC.Selected
     Dim tmp As SIS.TA.taCDLC = CType(e.ReturnValue, SIS.TA.taCDLC)
     Editable = tmp.Editable
     Deleteable = False
     PrimaryKey = tmp.PrimaryKey
+    Select Case tmp.FK_TA_BillDetails_TABillNo.TravelTypeID
+      Case TATravelTypeValues.Domestic, TATravelTypeValues.HomeVisit
+        IsForeign = False
+      Case TATravelTypeValues.ForeignSiteVisit, TATravelTypeValues.ForeignTravel
+        IsForeign = True
+    End Select
+    If tmp.FK_TA_BillDetails_TABillNo.StartDateTime = "" Then
+      TravelStarted = Now.ToString("dd/MM/yyyy")
+    Else
+      TravelStarted = tmp.FK_TA_BillDetails_TABillNo.StartDateTime
+    End If
   End Sub
   Protected Sub FVtaCDLC_Init(ByVal sender As Object, ByVal e As System.EventArgs) Handles FVtaCDLC.Init
     DataClassName = "EtaCDLC"
@@ -56,6 +89,10 @@ Partial Class EF_taCDLC
     oTR.Dispose()
     If Not Page.ClientScript.IsClientScriptBlockRegistered("scripttaCDLC") Then
       Page.ClientScript.RegisterClientScriptBlock(GetType(System.String), "scripttaCDLC", mStr)
+    End If
+    If IsForeign Then
+    Else
+      CType(FVtaCDLC.FindControl("L_AirportToHotel"), Label).Text = "Airport Pick & Drop :"
     End If
   End Sub
   <System.Web.Services.WebMethod()> _

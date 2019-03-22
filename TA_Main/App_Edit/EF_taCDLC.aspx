@@ -61,11 +61,42 @@
       <tr><td colspan="4" style="border-top: solid 1pt LightGrey" ></td></tr>
       <tr>
         <td class="alignright">
-          <asp:Label ID="L_City1Text" runat="server" Text="From Place :" />&nbsp;
+          <asp:Label ID="L_City1ID" runat="server" Text="In City :" />&nbsp;
+        </td>
+        <td>
+          <asp:TextBox
+            ID = "F_City1ID"
+            CssClass = ""
+            Text='<%# Bind("City1ID") %>'
+            Width="248px"
+            Enabled="false"
+            Runat="Server" />
+          <asp:Label
+            ID = "F_City1ID_Display"
+            Text='<%# Eval("TA_Cities6_CityName") %>'
+            CssClass="myLbl"
+            style="display:none"
+            Runat="Server" />
+        </td>
+        <td class="alignright">
+          <asp:Label ID="Label1" runat="server" Text="Other City :" />&nbsp;
         </td>
         <td>
           <asp:TextBox ID="F_City1Text"
             Text='<%# Bind("City1Text") %>'
+            Width="200px" 
+            CssClass = ""
+            Enabled="false"
+            runat="server" />
+        </td>
+      </tr>
+      <tr>
+        <td class="alignright">
+          <asp:Label ID="L_City1Text" runat="server" Text="From Place :" />&nbsp;
+        </td>
+        <td>
+          <asp:TextBox ID="F_FromAddress"
+            Text='<%# Bind("FromAddress") %>'
             Enabled = "False"
             Width="350px"
             CssClass = "dmytxt"
@@ -75,8 +106,8 @@
           <asp:Label ID="L_City2Text" runat="server" Text="To Place :" />&nbsp;
         </td>
         <td>
-          <asp:TextBox ID="F_City2Text"
-            Text='<%# Bind("City2Text") %>'
+          <asp:TextBox ID="F_ToAddress"
+            Text='<%# Bind("ToAddress") %>'
             Enabled = "False"
             Width="350px"
             CssClass = "dmytxt"
@@ -96,15 +127,15 @@
             runat="server" />
         </td>
         <td class="alignright">
-<%--          <asp:Label ID="L_Date2Time" runat="server" Text="End Date & Time :" />&nbsp;--%>
+          <asp:Label ID="L_Date2Time" runat="server" Text="End Date & Time :" />&nbsp;
         </td>
         <td>
-<%--          <asp:TextBox ID="F_Date2Time"
+          <asp:TextBox ID="F_Date2Time"
             Text='<%# Bind("Date2Time") %>'
             Enabled = "False"
             Width="168px"
             CssClass = "dmytxt"
-            runat="server" />--%>
+            runat="server" />
         </td>
       </tr>
       <tr>
@@ -140,21 +171,11 @@
       <tr><td colspan="4" style="border-top: solid 1pt LightGrey" ></td></tr>
       <tr>
         <td class="alignright">
-          <asp:Label ID="L_AirportToHotel" runat="server" Text="Airport To Hotel :" />&nbsp;
+          <asp:Label ID="L_AirportToHotel" runat="server" Text="Airport To/From Hotel/Client Location :" />&nbsp;
         </td>
-        <td>
+        <td colspan="3">
           <asp:CheckBox ID="F_AirportToHotel"
             Checked='<%# Bind("AirportToHotel") %>'
-            Enabled = "False"
-            CssClass = "dmychk"
-            runat="server" />
-        </td>
-        <td class="alignright">
-          <asp:Label ID="L_AirportToClientLocation" runat="server" Text="Airport To Client Location :" />&nbsp;
-        </td>
-        <td>
-          <asp:CheckBox ID="F_AirportToClientLocation"
-            Checked='<%# Bind("AirportToClientLocation") %>'
             Enabled = "False"
             CssClass = "dmychk"
             runat="server" />
@@ -163,17 +184,69 @@
       <tr><td colspan="4" style="border-top: solid 1pt LightGrey" ></td></tr>
       <tr>
         <td class="alignright">
-          <asp:Label ID="L_HotelToAirport" runat="server" Text="Hotel To Airport :" />&nbsp;
+           <asp:Label ID="L_AirportToClientLocation" runat="server" Text="Night Charges :" />&nbsp;
         </td>
-        <td colspan="3">
-          <asp:CheckBox ID="F_HotelToAirport"
-            Checked='<%# Bind("HotelToAirport") %>'
-            Enabled = "False"
-            CssClass = "dmychk"
-            runat="server" />
+        <td>
+        <asp:CheckBox ID="F_StayedWithRelative"
+          Checked='<%# Bind("StayedWithRelative") %>'
+          CssClass="dmychk"
+          Enabled="false"
+          runat="server" />
+        </td>
+       <td colspan="2">
+          <table>
+            <tr>
+              <td class="alignright">
+                <asp:Label ID="L_HotelToAirport" runat="server" Text="NON-Availability Charges :" />
+              </td>
+              <td>
+                <asp:CheckBox ID="F_StayedInGuestHouse"
+                  Checked='<%# Bind("StayedInGuestHouse") %>'
+                  CssClass="dmychk"
+                  Enabled="false"
+                  runat="server" />
+              </td>
+              <td class="alignright">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <asp:Label ID="Label2" runat="server" Text="Inter-State Toll :" />
+              </td>
+              <td>
+                <asp:CheckBox ID="F_StayedAtSite"
+                  Checked='<%# Bind("StayedAtSite") %>'
+                  CssClass="dmychk"
+                  Enabled="false"
+                  runat="server" />
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
       <tr><td colspan="4" style="border-top: solid 1pt LightGrey" ></td></tr>
+      <tr>
+        <td class="alignright">
+          <asp:Label ID="L_AmountRateOU" runat="server" Text="Claimed Rate/Amount :" />&nbsp;
+        </td>
+        <td>
+          <asp:TextBox ID="F_AmountRateOU"
+            Text='<%# Bind("AmountRateOU") %>'
+            Width="88px"
+            style="text-align: Right"
+            Enabled="false"
+            runat="server" />
+        </td>
+        <td class="alignright">
+          <asp:Label ID="L_AmountRate" runat="server" Text="Claimed KM :" />&nbsp;
+        </td>
+        <td colspan="3">
+          <asp:TextBox ID="F_AmountRate"
+            Text='<%# Bind("AmountRate") %>'
+            Enabled = "False"
+            Width="88px"
+            style="text-align: right"
+            runat="server" />
+        </td>
+
+      </tr>
       <tr>
         <td class="alignright">
           <asp:Label ID="L_AmountFactor" runat="server" Text="Claimed Amount :" />&nbsp;
@@ -277,6 +350,7 @@
             ToolTip="Value of Remarks."
             Enabled = "False"
             Width="350px" Height="40px"
+            TextMode="MultiLine"
             CssClass = "dmytxt"
             runat="server" />
         </td>
@@ -289,6 +363,7 @@
             ToolTip="Value of OOE Remarks."
             Enabled = "False"
             Width="350px" Height="40px"
+            TextMode="MultiLine"
             CssClass = "dmytxt"
             runat="server" />
         </td>

@@ -32,9 +32,30 @@
           SGSTAmount.value = (parseFloat(SGSTRate.value) * parseFloat(AssessableValue.value) * 0.01).toFixed(2);
         if (parseFloat(CGSTRate.value) > 0)
           CGSTAmount.value = (parseFloat(CGSTRate.value) * parseFloat(AssessableValue.value) * 0.01).toFixed(2);
+        SGSTAmount.value = CGSTAmount.value;
         TotalGST.value = (parseFloat(CessAmount.value) + parseFloat(IGSTAmount.value) + parseFloat(SGSTAmount.value) + parseFloat(CGSTAmount.value)).toFixed(2);
         TotalAmount.value = (parseFloat(AssessableValue.value) + parseFloat(TotalGST.value)).toFixed(2);
       } catch (e) { }
+    }
+    function validate_gstin(x) {
+      var ddl = $get('F_PurchaseType');
+      var txt = $get('F_SupplierGSTINNo');
+      var isg = $get('DDLspmtIsgecGSTIN');
+      if (ddl.value == 'Purchase from Registered Dealer') {
+        ValidatorEnable($get('RFVspmtIsgecGSTIN'), true);
+        ValidatorEnable($get('RFVSupplierGSTINNo'), true);
+        if (isg.value != '' && txt.value != '') {
+          var sval = isg.options[isg.selectedIndex].text.replace(' ', '');
+          if (sval.substr(sval.length-15, 2) != txt.value.substr(0, 2)) {
+            alert('State Code of ISGEC GSTIN & Supplier GSTIN should be same.');
+            x.value = '';
+//            x.focus();
+          }
+        }
+      } else {
+        ValidatorEnable($get('RFVspmtIsgecGSTIN'), false);
+        ValidatorEnable($get('RFVSupplierGSTINNo'), false);
+      }
     }
   </script>
 
@@ -830,6 +851,8 @@
                   Width="200px"
                   ValidationGroup = "taBDLodging"
                   CssClass = "myddl"
+                  ClientIDMode="Static"
+                  onblur="validate_gstin(this);"
                   Runat="Server" >
                   <asp:ListItem Value="">---Select---</asp:ListItem>
                   <asp:ListItem Value="Purchase from Registered Dealer">Registered Dealer-ITC</asp:ListItem>
@@ -862,10 +885,12 @@
                     DataValueField="PrimaryKey"
                     IncludeDefault="true"
                     DefaultText="-- Select --"
+                    ClientIDMode="Static"
                     Width="200px"
                     CssClass="myddl"
                     ValidationGroup = "taBDLodging"
                     RequiredFieldErrorMessage="<div class='errorLG'>Required!</div>"
+                    ClientValidate="validate_gstin(this);"
                     Runat="Server" />
                 </td>
               </tr>
@@ -943,11 +968,12 @@
                     Text='<%# Bind("SupplierGSTINNo") %>'
                     CssClass="mytxt"
                     onfocus="return this.select();"
-                    onblur="this.value=this.value.replace(/\'/g,'');"
+                    onblur="validate_gstin(this);"
                     ToolTip="Enter Supplier  GSTIN No."
                     MaxLength="50"
                     Width="408px"
                     ValidationGroup = "taBDLodging"
+                    ClientIDMode="Static"
                     runat="server" />
                   <asp:RequiredFieldValidator
                     ID="RFVSupplierGSTINNo"
@@ -957,6 +983,7 @@
                     Display="Dynamic"
                     EnableClientScript="true"
                     ValidationGroup = "taBDLodging"
+                    ClientIDMode="Static"
                     SetFocusOnError="true" />
                 </td>
                 <td class="alignright">
@@ -1037,12 +1064,13 @@
                   <asp:TextBox ID="F_CGSTRate"
                     Text='<%# Bind("CGSTRate") %>'
                     Width="168px"
-                    CssClass="mytxt"
+                    CssClass="dmytxt"
                     Style="text-align: Right"
                     ValidationGroup="spmtSupplierBill"
                     MaxLength="20"
                     onfocus="return this.select();"
                     onblur="return validate_tots(this,2);"
+                    Enabled="false"
                     runat="server" />
                 </td>
                 <td class="alignright">
@@ -1069,12 +1097,13 @@
                   <asp:TextBox ID="F_SGSTRate"
                     Text='<%# Bind("SGSTRate") %>'
                     Width="168px"
-                    CssClass="mytxt"
+                    CssClass="dmytxt"
                     Style="text-align: Right"
                     ValidationGroup="spmtSupplierBill"
                     MaxLength="20"
                     onfocus="return this.select();"
                     onblur="return validate_tots(this,2);"
+                    Enabled="false"
                     runat="server" />
                 </td>
                 <td class="alignright">
@@ -1088,12 +1117,13 @@
                     onfocus="return this.select();"
                     onblur="return validate_tots(this,2);"
                     Width="168px"
-                    CssClass="mytxt"
+                    CssClass="dmytxt"
                     Style="text-align: right"
+                    Enabled="false"
                     runat="server" />
                 </td>
               </tr>
-              <tr>
+              <tr style="display:none;">
                 <td class="alignright">
                   <asp:Label ID="L_CessRate" runat="server" Text="Cess % [Rate] :" />
                 </td>

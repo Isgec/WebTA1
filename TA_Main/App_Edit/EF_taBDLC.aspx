@@ -19,6 +19,70 @@
   DataSourceID = "ODStaBDLC"
   DefaultMode = "Edit" CssClass="sis_formview">
   <EditItemTemplate>
+<script type="text/javascript"> 
+var script_taBDFare = {
+    ACECity1ID_Selected: function(sender, e) {
+      var Prefix = sender._element.id.replace('City1ID','');
+      var F_City1ID = $get(sender._element.id);
+      var F_City1ID_Display = $get(sender._element.id + '_Display');
+      var retval = e.get_value();
+      var p = retval.split('|');
+      F_City1ID.value = p[0];
+      F_City1ID_Display.innerHTML = e.get_text();
+    },
+    ACECity1ID_Populating: function(sender,e) {
+      var p = sender.get_element();
+      var Prefix = sender._element.id.replace('City1ID','');
+      p.style.backgroundImage  = 'url(../../images/loader.gif)';
+      p.style.backgroundRepeat= 'no-repeat';
+      p.style.backgroundPosition = 'right';
+      sender._contextKey = '';
+    },
+    ACECity1ID_Populated: function(sender,e) {
+      var p = sender.get_element();
+      p.style.backgroundImage  = 'none';
+    },
+
+    validate_City1ID: function(sender) {
+      var Prefix = sender.id.replace('City1ID','');
+      this.validated_FK_TA_BillDetails_City1ID_main = true;
+      this.validate_FK_TA_BillDetails_City1ID(sender,Prefix);
+      },
+    validate_FK_TA_BillDetails_City1ID: function(o,Prefix) {
+      var value = o.id;
+      var City1ID = $get(Prefix + 'City1ID');
+      if(City1ID.value==''){
+        if(this.validated_FK_TA_BillDetails_City1ID_main){
+          var o_d = $get(Prefix + 'City1ID' + '_Display');
+          try{o_d.innerHTML = '';}catch(ex){}
+        }
+        return true;
+      }
+      value = value + ',' + City1ID.value ;
+        o.style.backgroundImage  = 'url(../../images/pkloader.gif)';
+        o.style.backgroundRepeat= 'no-repeat';
+        o.style.backgroundPosition = 'right';
+        PageMethods.validate_FK_TA_BillDetails_City1ID(value, this.validated_FK_TA_BillDetails_City1ID);
+      },
+    validated_FK_TA_BillDetails_City1ID_main: false,
+    validated_FK_TA_BillDetails_City1ID: function(result) {
+      var p = result.split('|');
+      var o = $get(p[1]);
+      if(script_taBDFare.validated_FK_TA_BillDetails_City1ID_main){
+        var o_d = $get(p[1]+'_Display');
+        try{o_d.innerHTML = p[2];}catch(ex){}
+      }
+      o.style.backgroundImage  = 'none';
+      if(p[0]=='1'){
+        o.value='';
+        o.focus();
+      }
+    },
+
+    temp: function() {
+    }
+    }
+</script>
     <div id="frmdiv" class="ui-widget-content minipage">
     <table style="margin:auto;border: solid 1pt lightgrey">
       <tr>
@@ -60,7 +124,149 @@
       <tr><td colspan="4" style="border-top: solid 1pt LightGrey" ></td></tr>
       <tr>
         <td class="alignright">
-          <asp:Label ID="L_Date1Time" runat="server" Text="Date :" /><span style="color:red">*</span>
+          <asp:Label ID="L_ModeLCID" runat="server" Text="Local Coveyance Mode :" />&nbsp;
+        </td>
+        <td>
+          <LGM:LC_taLCModes
+            ID="F_ModeLCID"
+            SelectedValue='<%# Bind("ModeLCID") %>'
+            OrderBy="DisplayField"
+            DataTextField="DisplayField"
+            DataValueField="PrimaryKey"
+            IncludeDefault="true"
+            DefaultText="-- Select --"
+            Width="200px"
+            CssClass="myddl"
+            OnSelectedIndexChanged="DDLChanged"
+            AutoPostBack="true"
+            Runat="Server" />
+          </td>
+        <td class="alignright">
+          <asp:Label ID="L_ModeText" runat="server" Text="Conveyance Mode [ If not found in List ] :" />&nbsp;
+        </td>
+        <td>
+          <asp:TextBox ID="F_ModeText"
+            Text='<%# Bind("ModeText") %>'
+            Width="350px" 
+            CssClass = "mytxt"
+            onfocus = "return this.select();"
+            onblur= "this.value=this.value.replace(/\'/g,'');"
+            ToolTip="Enter value for Conveyance Mode [ If not found in List ]."
+            MaxLength="100"
+            runat="server" />
+        </td>
+      </tr>
+      <tr>
+        <td class="alignright">
+          <asp:Label ID="L_City1ID" runat="server" Text="In City :" />&nbsp;
+        </td>
+        <td>
+          <asp:TextBox
+            ID = "F_City1ID"
+            CssClass = ""
+            Text='<%# Bind("City1ID") %>'
+            AutoCompleteType = "None"
+            Width="248px"
+            onfocus = "return this.select();"
+            ToolTip="Enter value for From City."
+            onblur= "script_taBDFare.validate_City1ID(this);"
+            Enabled="false"
+            Runat="Server" />
+          <asp:Label
+            ID = "F_City1ID_Display"
+            Text='<%# Eval("TA_Cities6_CityName") %>'
+            CssClass="myLbl"
+            style="display:none"
+            Runat="Server" />
+          <AJX:AutoCompleteExtender
+            ID="ACECity1ID"
+            BehaviorID="B_ACECity1ID"
+            ContextKey=""
+            UseContextKey="true"
+            ServiceMethod="City1IDCompletionList"
+            TargetControlID="F_City1ID"
+            EnableCaching="false"
+            CompletionInterval="100"
+            FirstRowSelected="true"
+            MinimumPrefixLength="1"
+            OnClientItemSelected="script_taBDFare.ACECity1ID_Selected"
+            OnClientPopulating="script_taBDFare.ACECity1ID_Populating"
+            OnClientPopulated="script_taBDFare.ACECity1ID_Populated"
+            CompletionSetCount="10"
+            CompletionListCssClass = "autocomplete_completionListElement"
+            CompletionListItemCssClass = "autocomplete_listItem"
+            CompletionListHighlightedItemCssClass = "autocomplete_highlightedListItem"
+            Runat="Server" />
+        </td>
+        <td class="alignright">
+          <asp:Label ID="Label1" runat="server" Text="Other City :" />&nbsp;
+        </td>
+        <td>
+          <asp:TextBox ID="F_City1Text"
+            Text='<%# Bind("City1Text") %>'
+            Width="200px" 
+            CssClass = ""
+            onfocus = "return this.select();"
+            onblur= "this.value=this.value.replace(/\'/g,'');"
+            ToolTip="Enter City Name [ If not found in List ]."
+            MaxLength="100"
+            Enabled="false"
+            runat="server" />
+        </td>
+      </tr>
+      <tr>
+        <td class="alignright">
+          <asp:Label ID="L_City1Text" runat="server" Text="From Address :" /><span style="color:red">*</span>
+        </td>
+        <td>
+          <asp:TextBox ID="F_FromAddress"
+            Text='<%# Bind("FromAddress") %>'
+            Width="350px" 
+            CssClass = "mytxt"
+            onfocus = "return this.select();"
+            ValidationGroup="taBDLC"
+            onblur= "this.value=this.value.replace(/\'/g,'');"
+            ToolTip="Enter value for From Place."
+            MaxLength="100"
+            runat="server" />
+          <asp:RequiredFieldValidator 
+            ID = "RFVCity1Text"
+            runat = "server"
+            ControlToValidate = "F_FromAddress"
+            ErrorMessage = "<div class='errorLG'>Required!</div>"
+            Display = "Dynamic"
+            EnableClientScript = "true"
+            ValidationGroup = "taBDLC"
+            SetFocusOnError="true" />
+        </td>
+        <td class="alignright">
+          <asp:Label ID="L_City2Text" runat="server" Text="To Address :" /><span style="color:red">*</span>
+        </td>
+        <td>
+          <asp:TextBox ID="F_ToAddress"
+            Text='<%# Bind("ToAddress") %>'
+            Width="350px" 
+            CssClass = "mytxt"
+            onfocus = "return this.select();"
+            ValidationGroup="taBDLC"
+            onblur= "this.value=this.value.replace(/\'/g,'');"
+            ToolTip="Enter value for To Place."
+            MaxLength="100"
+            runat="server" />
+          <asp:RequiredFieldValidator 
+            ID = "RFVCity2Text"
+            runat = "server"
+            ControlToValidate = "F_ToAddress"
+            ErrorMessage = "<div class='errorLG'>Required!</div>"
+            Display = "Dynamic"
+            EnableClientScript = "true"
+            ValidationGroup = "taBDLC"
+            SetFocusOnError="true" />
+        </td>
+      </tr>
+      <tr>
+        <td class="alignright">
+          <asp:Label ID="L_Date1Time" runat="server" Text="Starting Time :" /><span style="color:red">*</span>
         </td>
         <td>
           <asp:TextBox ID="F_Date1Time"
@@ -74,13 +280,13 @@
           <AJX:CalendarExtender 
             ID = "CEDate1Time"
             TargetControlID="F_Date1Time"
-            Format="dd/MM/yyyy"
+            Format="dd/MM/yyyy HH:mm"
             runat = "server" CssClass="MyCalendar" PopupButtonID="ImageButtonDate1Time" />
           <AJX:MaskedEditExtender 
             ID = "MEEDate1Time"
             runat = "server"
-            mask = "99/99/9999"
-            MaskType="Date"
+            mask = "99/99/9999 99:99"
+            MaskType="DateTime"
             CultureName = "en-GB"
             MessageValidatorTip="true"
             InputDirection="LeftToRight"
@@ -99,96 +305,52 @@
             SetFocusOnError="true" />
         </td>
         <td class="alignright">
+          <asp:Label ID="L_Date2Time" runat="server" Text="Reaching Time :" /><span style="color:red">*</span>
         </td>
         <td>
-        </td>
-      </tr>
-      <tr>
-        <td class="alignright">
-          <asp:Label ID="L_City1Text" runat="server" Text="From Place :" /><span style="color:red">*</span>
-        </td>
-        <td>
-          <asp:TextBox ID="F_City1Text"
-            Text='<%# Bind("City1Text") %>'
-            Width="350px" 
-            CssClass = "mytxt"
+          <asp:TextBox ID="F_Date2Time"
+            Text='<%# Bind("Date2Time") %>'
+            Width="110px"
+            CssClass = ""
             onfocus = "return this.select();"
-            ValidationGroup="taBDLC"
-            onblur= "this.value=this.value.replace(/\'/g,'');"
-            ToolTip="Enter value for From Place."
-            MaxLength="100"
+            ValidationGroup = "taBDLC"
+            Enabled="false"
             runat="server" />
-          <asp:RequiredFieldValidator 
-            ID = "RFVCity1Text"
+          <asp:Image ID="ImageButtonDate2Time" runat="server" ToolTip="Click to open calendar" style="cursor: pointer; vertical-align:bottom" ImageUrl="~/Images/cal.png" />
+          <AJX:CalendarExtender 
+            ID = "CEDate2Time"
+            TargetControlID="F_Date2Time"
+            Format="dd/MM/yyyy HH:mm"
+            Enabled="false"
+            runat = "server" CssClass="MyCalendar" PopupButtonID="ImageButtonDate2Time" />
+          <AJX:MaskedEditExtender 
+            ID = "MEEDate2Time"
             runat = "server"
-            ControlToValidate = "F_City1Text"
-            ErrorMessage = "<div class='errorLG'>Required!</div>"
+            mask = "99/99/9999 99:99"
+            MaskType="DateTime"
+            CultureName = "en-GB"
+            MessageValidatorTip="true"
+            InputDirection="LeftToRight"
+            ErrorTooltipEnabled="true"
+            TargetControlID="F_Date2Time" />
+          <AJX:MaskedEditValidator 
+            ID = "MEVDate2Time"
+            runat = "server"
+            ControlToValidate = "F_Date2Time"
+            ControlExtender = "MEEDate2Time"
+            EmptyValueBlurredText = "<div class='errorLG'>Required!</div>"
             Display = "Dynamic"
             EnableClientScript = "true"
             ValidationGroup = "taBDLC"
+            IsValidEmpty = "false"
+            Enabled="false"
             SetFocusOnError="true" />
-        </td>
-        <td class="alignright">
-          <asp:Label ID="L_City2Text" runat="server" Text="To Place :" /><span style="color:red">*</span>
-        </td>
-        <td>
-          <asp:TextBox ID="F_City2Text"
-            Text='<%# Bind("City2Text") %>'
-            Width="350px" 
-            CssClass = "mytxt"
-            onfocus = "return this.select();"
-            ValidationGroup="taBDLC"
-            onblur= "this.value=this.value.replace(/\'/g,'');"
-            ToolTip="Enter value for To Place."
-            MaxLength="100"
-            runat="server" />
-          <asp:RequiredFieldValidator 
-            ID = "RFVCity2Text"
-            runat = "server"
-            ControlToValidate = "F_City2Text"
-            ErrorMessage = "<div class='errorLG'>Required!</div>"
-            Display = "Dynamic"
-            EnableClientScript = "true"
-            ValidationGroup = "taBDLC"
-            SetFocusOnError="true" />
-        </td>
-      </tr>
-      <tr>
-        <td class="alignright">
-          <asp:Label ID="L_ModeLCID" runat="server" Text="Local Coveyance Mode :" />&nbsp;
-        </td>
-        <td>
-          <LGM:LC_taLCModes
-            ID="F_ModeLCID"
-            SelectedValue='<%# Bind("ModeLCID") %>'
-            OrderBy="DisplayField"
-            DataTextField="DisplayField"
-            DataValueField="PrimaryKey"
-            IncludeDefault="true"
-            DefaultText="-- Select --"
-            Width="200px"
-            CssClass="myddl"
-            Runat="Server" />
-          </td>
-        <td class="alignright">
-          <asp:Label ID="L_ModeText" runat="server" Text="Conveyance Mode [ If not found in List ] :" />&nbsp;
-        </td>
-        <td>
-          <asp:TextBox ID="F_ModeText"
-            Text='<%# Bind("ModeText") %>'
-            Width="350px" 
-            CssClass = "mytxt"
-            onfocus = "return this.select();"
-            onblur= "this.value=this.value.replace(/\'/g,'');"
-            ToolTip="Enter value for Conveyance Mode [ If not found in List ]."
-            MaxLength="100"
-            runat="server" />
         </td>
       </tr>
       <tr><td colspan="4" style="border-top: solid 1pt LightGrey" ></td></tr>
-      <tr id="opt1" runat="server" ClientIDMode="Static">
+      <tr>
         <td class="alignright">
-          <asp:Label ID="L_AirportToHotel" runat="server" Text="Airport To Hotel :" />&nbsp;
+          <asp:Label ID="L_AirportToHotel" runat="server" Text="Airport To/From Hotel/Client Location :" />
         </td>
         <td colspan="3">
           <asp:CheckBox ID="F_AirportToHotel"
@@ -199,26 +361,38 @@
       </tr>
       <tr><td colspan="4" style="border-top: solid 1pt LightGrey" ></td></tr>
       <tr id="opt2" runat="server" ClientIDMode="Static">
-        <td class="alignright">
-          <asp:Label ID="L_AirportToClientLocation" runat="server" Text="Airport To Client Location :" />&nbsp;
-        </td>
-        <td colspan="3">
-          <asp:CheckBox ID="F_AirportToClientLocation"
-            Checked='<%# Bind("AirportToClientLocation") %>'
-            CssClass = "mychk"
-            runat="server" />
-        </td>
-      </tr>
-      <tr><td colspan="4" style="border-top: solid 1pt LightGrey" ></td></tr>
-      <tr id="opt3" runat="server" ClientIDMode="Static">
-        <td class="alignright">
-          <asp:Label ID="L_HotelToAirport" runat="server" Text="Hotel To Airport :" />&nbsp;
-        </td>
-        <td colspan="3">
-          <asp:CheckBox ID="F_HotelToAirport"
-            Checked='<%# Bind("HotelToAirport") %>'
-            CssClass = "mychk"
-            runat="server" />
+        <td colspan="4">
+          <table style="width:100%;">
+            <tr>
+              <td class="alignright">
+                <asp:Label ID="L_AirportToClientLocation" runat="server" Text="Night Charges :" />&nbsp;
+              </td>
+              <td colspan="3">
+                <asp:CheckBox ID="F_StayedWithRelative"
+                  Checked='<%# Bind("StayedWithRelative") %>'
+                  CssClass = "mychk"
+                  runat="server" />
+              </td>
+              <td class="alignright">
+                <asp:Label ID="L_HotelToAirport" runat="server" Text="NON-Availability Charges :" />&nbsp;
+              </td>
+              <td colspan="3">
+                <asp:CheckBox ID="F_StayedInGuestHouse"
+                  Checked='<%# Bind("StayedInGuestHouse") %>'
+                  CssClass = "mychk"
+                  runat="server" />
+              </td>
+              <td class="alignright">
+                <asp:Label ID="Label2" runat="server" Text="Inter-State Toll :" />&nbsp;
+              </td>
+              <td colspan="3">
+                <asp:CheckBox ID="F_StayedAtSite"
+                  Checked='<%# Bind("StayedAtSite") %>'
+                  CssClass = "mychk"
+                  runat="server" />
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
       <tr><td colspan="4" style="border-top: solid 1pt LightGrey" ></td></tr>
@@ -284,7 +458,7 @@
       <tr><td colspan="4" style="border-top: solid 1pt LightGrey" ></td></tr>
       <tr>
         <td class="alignright">
-          <asp:Label ID="L_AmountRateOU" runat="server" Text="Claimed Amount :" />&nbsp;
+          <asp:Label ID="L_AmountRateOU" runat="server" Text="Claimed Rate/Amount :" />&nbsp;
         </td>
         <td>
           <asp:TextBox ID="F_AmountRateOU"
@@ -316,15 +490,16 @@
             Runat="Server" />
           </td>
       </tr>
-      <tr id="ouc" runat="server" ClientIDMode="Static">
+      <tr>
         <td class="alignright">
           <asp:Label ID="L_CurrencyMain" runat="server" Text="Main Currency of TA Bill :" />&nbsp;
         </td>
         <td>
-          <asp:Label ID="F_CurrencyMain"
+          <asp:TextBox ID="F_CurrencyMain"
             Text='<%# Bind("CurrencyMain") %>'
             Width="88px"
-            CssClass = "mytxt"
+            CssClass = ""
+            Enabled="false"
             runat="server" />
         </td>
         <td class="alignright">
@@ -346,7 +521,7 @@
       <tr><td colspan="4" style="border-top: solid 1pt LightGrey" ></td></tr>
       <tr>
         <td class="alignright">
-          <asp:Label ID="L_AmountRate" runat="server" Text="Claimed Rate :" />&nbsp;
+          <asp:Label ID="L_AmountRate" runat="server" Text="Claimed KM :" />&nbsp;
         </td>
         <td colspan="3">
           <asp:TextBox ID="F_AmountRate"
@@ -381,8 +556,8 @@
           <asp:Label ID="L_AmountTax" runat="server" Text="Claimed Tax :" />&nbsp;
         </td>
         <td colspan="3">
-          <asp:TextBox ID="F_AmountTax"
-            Text='<%# Bind("AmountTax") %>'
+          <asp:TextBox ID="F_AmountTaxOU"
+            Text='<%# Bind("AmountTaxOU") %>'
             ToolTip="Value of Claimed Tax."
             Enabled = "False"
             Width="168px"

@@ -22,6 +22,14 @@ Partial Class LC_spmtIsgecGSTIN
       Return DDLspmtIsgecGSTIN.ClientID
     End Get
   End Property
+  Public Property ClientValidate As String
+    Get
+      Return DDLspmtIsgecGSTIN.Attributes.Item("onblur")
+    End Get
+    Set(value As String)
+      DDLspmtIsgecGSTIN.Attributes.Add("onblur", value)
+    End Set
+  End Property
   Public Property AddAttributes() As String
     Get
       Return DDLspmtIsgecGSTIN.Attributes.ToString
@@ -52,18 +60,18 @@ Partial Class LC_spmtIsgecGSTIN
   End Property
   Public Property RequiredFieldErrorMessage() As String
     Get
-      Return RequiredFieldValidatorspmtIsgecGSTIN.Text
+      Return RFVspmtIsgecGSTIN.Text
     End Get
     Set(ByVal value As String)
-      RequiredFieldValidatorspmtIsgecGSTIN.Text = value
+      RFVspmtIsgecGSTIN.Text = value
     End Set
   End Property
   Public Property ValidationGroup() As String
     Get
-      Return RequiredFieldValidatorspmtIsgecGSTIN.ValidationGroup
+      Return RFVspmtIsgecGSTIN.ValidationGroup
     End Get
     Set(ByVal value As String)
-      RequiredFieldValidatorspmtIsgecGSTIN.ValidationGroup = value
+      RFVspmtIsgecGSTIN.ValidationGroup = value
     End Set
   End Property
   Public Property Enabled() As Boolean

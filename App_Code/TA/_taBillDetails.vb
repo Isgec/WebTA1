@@ -518,6 +518,9 @@ Namespace SIS.TA
       End Get
     End Property
 #End Region
+    Public Property RateCalculationBase As String = ""
+    Public Property ToAddress As String = ""
+    Public Property FromAddress As String = ""
     Public ReadOnly Property ForeColor() As System.Drawing.Color
       Get
         Dim mRet As System.Drawing.Color = Drawing.Color.Blue
@@ -1792,6 +1795,9 @@ Namespace SIS.TA
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@SanctionFileName", SqlDbType.NVarChar, 101, IIf(Record.SanctionFileName = "", Convert.DBNull, Record.SanctionFileName))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@SanctionDiskFile", SqlDbType.NVarChar, 251, IIf(Record.SanctionDiskFile = "", Convert.DBNull, Record.SanctionDiskFile))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@SystemText", SqlDbType.NVarChar, 251, IIf(Record.SystemText = "", Convert.DBNull, Record.SystemText))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FromAddress", SqlDbType.NVarChar, 251, IIf(Record.FromAddress = "", Convert.DBNull, Record.FromAddress))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ToAddress", SqlDbType.NVarChar, 251, IIf(Record.ToAddress = "", Convert.DBNull, Record.ToAddress))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@RateCalculationBase", SqlDbType.NVarChar, 251, IIf(Record.RateCalculationBase = "", Convert.DBNull, Record.RateCalculationBase))
           Cmd.Parameters.Add("@Return_TABillNo", SqlDbType.Int, 11)
           Cmd.Parameters("@Return_TABillNo").Direction = ParameterDirection.Output
           Cmd.Parameters.Add("@Return_SerialNo", SqlDbType.Int, 11)
@@ -1949,6 +1955,9 @@ Namespace SIS.TA
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@SanctionFileName", SqlDbType.NVarChar, 101, IIf(Record.SanctionFileName = "", Convert.DBNull, Record.SanctionFileName))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@SanctionDiskFile", SqlDbType.NVarChar, 251, IIf(Record.SanctionDiskFile = "", Convert.DBNull, Record.SanctionDiskFile))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@SystemText", SqlDbType.NVarChar, 251, IIf(Record.SystemText = "", Convert.DBNull, Record.SystemText))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FromAddress", SqlDbType.NVarChar, 251, IIf(Record.FromAddress = "", Convert.DBNull, Record.FromAddress))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ToAddress", SqlDbType.NVarChar, 251, IIf(Record.ToAddress = "", Convert.DBNull, Record.ToAddress))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@RateCalculationBase", SqlDbType.NVarChar, 251, IIf(Record.RateCalculationBase = "", Convert.DBNull, Record.RateCalculationBase))
           Cmd.Parameters.Add("@RowCount", SqlDbType.Int)
           Cmd.Parameters("@RowCount").Direction = ParameterDirection.Output
           _RecordCount = -1

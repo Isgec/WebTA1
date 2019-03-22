@@ -27,6 +27,8 @@ Namespace SIS.TA
     Private _FK_TA_Cities_CurrencyID As SIS.TA.taCurrencies = Nothing
     Private _FK_TA_Cities_RegionID As SIS.TA.taRegions = Nothing
     Private _FK_TA_Cities_RegionTypeID As SIS.TA.taRegionTypes = Nothing
+    Public Property ShowInFare As Boolean = False
+    Public Property ShowInLC As Boolean = False
     Public ReadOnly Property ForeColor() As System.Drawing.Color
       Get
         Dim mRet As System.Drawing.Color = Drawing.Color.Blue
@@ -328,7 +330,7 @@ Namespace SIS.TA
       Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
         Using Cmd As SqlCommand = Con.CreateCommand()
           Cmd.CommandType = CommandType.StoredProcedure
-          Cmd.CommandText = "sptaCitiesSelectByID"
+          Cmd.CommandText = "spta_LG_FareCitiesSelectByID"
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CityID",SqlDbType.NVarChar,CityID.ToString.Length, CityID)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LoginID", SqlDbType.NvarChar, 9, HttpContext.Current.Session("LoginID"))
           Con.Open()
@@ -341,7 +343,43 @@ Namespace SIS.TA
       End Using
       Return Results
     End Function
-    <DataObjectMethod(DataObjectMethodType.Select)> _
+    Public Shared Function taAllCitiesGetByID(ByVal CityID As String) As SIS.TA.taCities
+      Dim Results As SIS.TA.taCities = Nothing
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.StoredProcedure
+          Cmd.CommandText = "sptaCitiesSelectByID"
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CityID", SqlDbType.NVarChar, CityID.ToString.Length, CityID)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LoginID", SqlDbType.NVarChar, 9, HttpContext.Current.Session("LoginID"))
+          Con.Open()
+          Dim Reader As SqlDataReader = Cmd.ExecuteReader()
+          If Reader.Read() Then
+            Results = New SIS.TA.taCities(Reader)
+          End If
+          Reader.Close()
+        End Using
+      End Using
+      Return Results
+    End Function
+    Public Shared Function taLCCitiesGetByID(ByVal CityID As String) As SIS.TA.taCities
+      Dim Results As SIS.TA.taCities = Nothing
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.StoredProcedure
+          Cmd.CommandText = "spta_LG_LCCitiesSelectByID"
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CityID", SqlDbType.NVarChar, CityID.ToString.Length, CityID)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LoginID", SqlDbType.NVarChar, 9, HttpContext.Current.Session("LoginID"))
+          Con.Open()
+          Dim Reader As SqlDataReader = Cmd.ExecuteReader()
+          If Reader.Read() Then
+            Results = New SIS.TA.taCities(Reader)
+          End If
+          Reader.Close()
+        End Using
+      End Using
+      Return Results
+    End Function
+    <DataObjectMethod(DataObjectMethodType.Select)>
     Public Shared Function taCitiesSelectList(ByVal StartRowIndex As Integer, ByVal MaximumRows As Integer, ByVal OrderBy As String, ByVal SearchState As Boolean, ByVal SearchText As String, ByVal CountryID As String, ByVal RegionID As String, ByVal CurrencyID As String, ByVal RegionTypeID As String) As List(Of SIS.TA.taCities)
       Dim Results As List(Of SIS.TA.taCities) = Nothing
       Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
@@ -352,14 +390,14 @@ Namespace SIS.TA
             SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@KeyWord", SqlDbType.NVarChar, 250, SearchText)
           Else
             Cmd.CommandText = "sptaCitiesSelectListFilteres"
-            SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Filter_CountryID",SqlDbType.NVarChar,30, IIf(CountryID Is Nothing, String.Empty,CountryID))
-            SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Filter_RegionID",SqlDbType.NVarChar,10, IIf(RegionID Is Nothing, String.Empty,RegionID))
-            SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Filter_CurrencyID",SqlDbType.NVarChar,6, IIf(CurrencyID Is Nothing, String.Empty,CurrencyID))
-            SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Filter_RegionTypeID",SqlDbType.NVarChar,10, IIf(RegionTypeID Is Nothing, String.Empty,RegionTypeID))
+            SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Filter_CountryID", SqlDbType.NVarChar, 30, IIf(CountryID Is Nothing, String.Empty, CountryID))
+            SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Filter_RegionID", SqlDbType.NVarChar, 10, IIf(RegionID Is Nothing, String.Empty, RegionID))
+            SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Filter_CurrencyID", SqlDbType.NVarChar, 6, IIf(CurrencyID Is Nothing, String.Empty, CurrencyID))
+            SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Filter_RegionTypeID", SqlDbType.NVarChar, 10, IIf(RegionTypeID Is Nothing, String.Empty, RegionTypeID))
           End If
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@StartRowIndex", SqlDbType.Int, -1, StartRowIndex)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@MaximumRows", SqlDbType.Int, -1, MaximumRows)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LoginID", SqlDbType.NvarChar, 9, HttpContext.Current.Session("LoginID"))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LoginID", SqlDbType.NVarChar, 9, HttpContext.Current.Session("LoginID"))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@OrderBy", SqlDbType.NVarChar, 50, OrderBy)
           Cmd.Parameters.Add("@RecordCount", SqlDbType.Int)
           Cmd.Parameters("@RecordCount").Direction = ParameterDirection.Output
@@ -396,6 +434,8 @@ Namespace SIS.TA
         .RegionID = Record.RegionID
         .CurrencyID = Record.CurrencyID
         .RegionTypeID = Record.RegionTypeID
+        .ShowInFare = Record.ShowInFare
+        .ShowInLC = Record.ShowInLC
       End With
       Return SIS.TA.taCities.InsertData(_Rec)
     End Function
@@ -411,7 +451,9 @@ Namespace SIS.TA
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CountryID",SqlDbType.NVarChar,31, Iif(Record.CountryID= "" ,Convert.DBNull, Record.CountryID))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@RegionID",SqlDbType.NVarChar,11, Iif(Record.RegionID= "" ,Convert.DBNull, Record.RegionID))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CurrencyID",SqlDbType.NVarChar,7, Iif(Record.CurrencyID= "" ,Convert.DBNull, Record.CurrencyID))
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@RegionTypeID",SqlDbType.NVarChar,11, Iif(Record.RegionTypeID= "" ,Convert.DBNull, Record.RegionTypeID))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@RegionTypeID", SqlDbType.NVarChar, 11, IIf(Record.RegionTypeID = "", Convert.DBNull, Record.RegionTypeID))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ShowInFare", SqlDbType.Bit, 3, Record.ShowInFare)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ShowInLC", SqlDbType.Bit, 3, Record.ShowInLC)
           Cmd.Parameters.Add("@Return_CityID", SqlDbType.NVarChar, 31)
           Cmd.Parameters("@Return_CityID").Direction = ParameterDirection.Output
           Con.Open()
@@ -432,6 +474,8 @@ Namespace SIS.TA
         .RegionID = Record.RegionID
         .CurrencyID = Record.CurrencyID
         .RegionTypeID = Record.RegionTypeID
+        .ShowInLC = Record.ShowInLC
+        .ShowInFare = Record.ShowInFare
       End With
       Return SIS.TA.taCities.UpdateData(_Rec)
     End Function
@@ -449,6 +493,8 @@ Namespace SIS.TA
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@RegionID",SqlDbType.NVarChar,11, Iif(Record.RegionID= "" ,Convert.DBNull, Record.RegionID))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CurrencyID",SqlDbType.NVarChar,7, Iif(Record.CurrencyID= "" ,Convert.DBNull, Record.CurrencyID))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@RegionTypeID",SqlDbType.NVarChar,11, Iif(Record.RegionTypeID= "" ,Convert.DBNull, Record.RegionTypeID))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ShowInFare", SqlDbType.Bit, 3, Record.ShowInFare)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ShowInLC", SqlDbType.Bit, 3, Record.ShowInLC)
           Cmd.Parameters.Add("@RowCount", SqlDbType.Int)
           Cmd.Parameters("@RowCount").Direction = ParameterDirection.Output
           _RecordCount = -1
@@ -504,69 +550,95 @@ Namespace SIS.TA
       End Using
       Return Results.ToArray
     End Function
+    Public Shared Function SelecttaLCCitiesAutoCompleteList(ByVal Prefix As String, ByVal count As Integer, ByVal contextKey As String) As String()
+      Dim Results As List(Of String) = Nothing
+      Dim aVal() As String = contextKey.Split("|".ToCharArray)
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.StoredProcedure
+          Cmd.CommandText = "spta_LG_LCCitiesAutoCompleteList"
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LoginID", SqlDbType.NVarChar, 9, HttpContext.Current.Session("LoginID"))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@prefix", SqlDbType.NVarChar, 50, Prefix)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@records", SqlDbType.Int, -1, count)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@bycode", SqlDbType.Int, 1, IIf(IsNumeric(Prefix), 0, IIf(Prefix.ToLower = Prefix, 0, 1)))
+          Results = New List(Of String)()
+          Con.Open()
+          Dim Reader As SqlDataReader = Cmd.ExecuteReader()
+          If Not Reader.HasRows Then
+            Results.Add(AjaxControlToolkit.AutoCompleteExtender.CreateAutoCompleteItem("---Select Value---".PadRight(80, " "), ""))
+          End If
+          While (Reader.Read())
+            Dim Tmp As SIS.TA.taCities = New SIS.TA.taCities(Reader)
+            Results.Add(AjaxControlToolkit.AutoCompleteExtender.CreateAutoCompleteItem(Tmp.DisplayField, Tmp.PrimaryKey))
+          End While
+          Reader.Close()
+        End Using
+      End Using
+      Return Results.ToArray
+    End Function
     Public Sub New(ByVal Reader As SqlDataReader)
       On Error Resume Next
-      _CityID = Ctype(Reader("CityID"),String)
+      _CityID = CType(Reader("CityID"), String)
       If Convert.IsDBNull(Reader("CityName")) Then
         _CityName = String.Empty
       Else
-        _CityName = Ctype(Reader("CityName"), String)
+        _CityName = CType(Reader("CityName"), String)
       End If
       If Convert.IsDBNull(Reader("CityTypeForDA")) Then
         _CityTypeForDA = String.Empty
       Else
-        _CityTypeForDA = Ctype(Reader("CityTypeForDA"), String)
+        _CityTypeForDA = CType(Reader("CityTypeForDA"), String)
       End If
       If Convert.IsDBNull(Reader("CityTypeForHotel")) Then
         _CityTypeForHotel = String.Empty
       Else
-        _CityTypeForHotel = Ctype(Reader("CityTypeForHotel"), String)
+        _CityTypeForHotel = CType(Reader("CityTypeForHotel"), String)
       End If
       If Convert.IsDBNull(Reader("CountryID")) Then
         _CountryID = String.Empty
       Else
-        _CountryID = Ctype(Reader("CountryID"), String)
+        _CountryID = CType(Reader("CountryID"), String)
       End If
       If Convert.IsDBNull(Reader("RegionID")) Then
         _RegionID = String.Empty
       Else
-        _RegionID = Ctype(Reader("RegionID"), String)
+        _RegionID = CType(Reader("RegionID"), String)
       End If
       If Convert.IsDBNull(Reader("CurrencyID")) Then
         _CurrencyID = String.Empty
       Else
-        _CurrencyID = Ctype(Reader("CurrencyID"), String)
+        _CurrencyID = CType(Reader("CurrencyID"), String)
       End If
       If Convert.IsDBNull(Reader("RegionTypeID")) Then
         _RegionTypeID = String.Empty
       Else
-        _RegionTypeID = Ctype(Reader("RegionTypeID"), String)
+        _RegionTypeID = CType(Reader("RegionTypeID"), String)
       End If
       If Convert.IsDBNull(Reader("TA_CityTypes1_CityTypeName")) Then
         _TA_CityTypes1_CityTypeName = String.Empty
       Else
-        _TA_CityTypes1_CityTypeName = Ctype(Reader("TA_CityTypes1_CityTypeName"), String)
+        _TA_CityTypes1_CityTypeName = CType(Reader("TA_CityTypes1_CityTypeName"), String)
       End If
       If Convert.IsDBNull(Reader("TA_CityTypes2_CityTypeName")) Then
         _TA_CityTypes2_CityTypeName = String.Empty
       Else
-        _TA_CityTypes2_CityTypeName = Ctype(Reader("TA_CityTypes2_CityTypeName"), String)
+        _TA_CityTypes2_CityTypeName = CType(Reader("TA_CityTypes2_CityTypeName"), String)
       End If
-      _TA_Countries3_CountryName = Ctype(Reader("TA_Countries3_CountryName"),String)
+      _TA_Countries3_CountryName = CType(Reader("TA_Countries3_CountryName"), String)
       If Convert.IsDBNull(Reader("TA_Currencies4_CurrencyName")) Then
         _TA_Currencies4_CurrencyName = String.Empty
       Else
-        _TA_Currencies4_CurrencyName = Ctype(Reader("TA_Currencies4_CurrencyName"), String)
+        _TA_Currencies4_CurrencyName = CType(Reader("TA_Currencies4_CurrencyName"), String)
       End If
       If Convert.IsDBNull(Reader("TA_Regions5_RegionName")) Then
         _TA_Regions5_RegionName = String.Empty
       Else
-        _TA_Regions5_RegionName = Ctype(Reader("TA_Regions5_RegionName"), String)
+        _TA_Regions5_RegionName = CType(Reader("TA_Regions5_RegionName"), String)
       End If
       If Convert.IsDBNull(Reader("TA_RegionTypes6_RegionTypeName")) Then
         _TA_RegionTypes6_RegionTypeName = String.Empty
       Else
-        _TA_RegionTypes6_RegionTypeName = Ctype(Reader("TA_RegionTypes6_RegionTypeName"), String)
+        _TA_RegionTypes6_RegionTypeName = CType(Reader("TA_RegionTypes6_RegionTypeName"), String)
       End If
     End Sub
     Public Sub New()

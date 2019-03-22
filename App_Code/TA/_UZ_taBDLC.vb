@@ -59,61 +59,267 @@ Namespace SIS.TA
       Return Results
     End Function
     Public Shared Function UZ_taBDLCInsert(ByVal Record As SIS.TA.taBDLC) As SIS.TA.taBDLC
+      Dim sBill As SIS.TA.taBH = Record.FK_TA_BillDetails_TABillNo
+      Dim xTmp As String = Record.ModeLCID
       With Record
         .ComponentID = TAComponentTypes.LC
         .AutoCalculated = False
         .TourExtended = False
-        .ProjectID = .FK_TA_BillDetails_TABillNo.ProjectID
-        .CostCenterID = .FK_TA_BillDetails_TABillNo.CostCenterID
-        .ConversionFactorINR = .FK_TA_BillDetails_TABillNo.ConversionFactorINR
-        If .FK_TA_BillDetails_TABillNo.BillCurrencyID <> "INR" Then
+        .ProjectID = sBill.ProjectID
+        .CostCenterID = sBill.CostCenterID
+        .ConversionFactorINR = sBill.ConversionFactorINR
+        If sBill.BillCurrencyID <> "INR" Then
           If .CurrencyID = "INR" Then
             .ConversionFactorOU = 1
             .ConversionFactorINR = 1
           End If
         End If
-        .AmountRate = 1
-        .AmountFactor = .AmountRateOU * .ConversionFactorOU
-        .AmountBasic = (.AmountFactor * .AmountRate)
-        .AmountTaxOU = 0
-        .AmountTax = .AmountTaxOU * .ConversionFactorOU
-        .AmountTotal = (.AmountBasic + .AmountTax)
-        .AmountInINR = .AmountTotal * .ConversionFactorINR
-        .PassedAmountFactor = .AmountFactor
-        .PassedAmountRate = .AmountRate
-        .PassedAmountBasic = .AmountBasic
-        .PassedAmountTax = .AmountTax
-        .PassedAmountTotal = .AmountTotal
-        .PassedAmountInINR = .AmountInINR
-        If .ModeLCID <> String.Empty Then
+        If Convert.ToDateTime(sBill.StartDateTime) < Convert.ToDateTime("15/03/2019") Then
+          .AmountRate = 1
+          .AmountFactor = .AmountRateOU * .ConversionFactorOU
+          .AmountBasic = (.AmountFactor * .AmountRate)
+          .AmountTaxOU = 0
+          .AmountTax = .AmountTaxOU * .ConversionFactorOU
+          .AmountTotal = (.AmountBasic + .AmountTax)
+          .AmountInINR = .AmountTotal * .ConversionFactorINR
+          .PassedAmountFactor = .AmountFactor
+          .PassedAmountRate = .AmountRate
+          .PassedAmountBasic = .AmountBasic
+          .PassedAmountTax = .AmountTax
+          .PassedAmountTotal = .AmountTotal
+          .PassedAmountInINR = .AmountInINR
+        Else
+          Select Case sBill.TravelTypeID
+            Case TATravelTypeValues.Domestic, TATravelTypeValues.HomeVisit
+              Select Case xTmp
+                Case "1", "2", "3", "11"
+                  If .AmountRateOU = 0 Then
+                    'pick from mileage entitlement
+                    Dim LocationID As Integer = sBill.FK_TA_Bills_EmployeeID.C_OfficeID
+                    Dim cityID As String = ""
+                    Select Case LocationID
+                      Case 4 'Chennai
+                        cityID = "Chennai-TN"
+                      Case 5 'Pune
+                        cityID = "Pune-MH"
+                      Case 7 ' Kolkatta
+                        cityID = "Kolkata-WB"
+                      Case 8 'Mumbai
+                        cityID = "MumbaiCity-MH"
+                    End Select
+                    Dim tmp As SIS.TA.taD_Mileage = SIS.TA.taD_Mileage.GetByCategoryID(Convert.ToInt32(sBill.TACategoryID), cityID, Convert.ToDateTime(.Date1Time))
+                    If tmp IsNot Nothing Then
+                      .AmountRateOU = tmp.AmountPerKM
+                    End If
+                  End If
+                  .AmountFactor = .AmountRateOU * .ConversionFactorOU
+                  .AmountBasic = (.AmountFactor * .AmountRate)
+                  .AmountTaxOU = 0
+                  .AmountTax = .AmountTaxOU * .ConversionFactorOU
+                  .AmountTotal = (.AmountBasic + .AmountTax)
+                  .AmountInINR = .AmountTotal * .ConversionFactorINR
+                  .PassedAmountFactor = .AmountFactor
+                  .PassedAmountRate = .AmountRate
+                  .PassedAmountBasic = .AmountBasic
+                  .PassedAmountTax = .AmountTax
+                  .PassedAmountTotal = .AmountTotal
+                  .PassedAmountInINR = .AmountInINR
+                  .SystemText = " [Taxi] Total KM: " & .AmountRate & " @: " & .AmountFactor.ToString("n") & " per KM."
+                Case "4", "8"
+                  Dim tmpStr As String = "["
+                  Dim xLCRate As SIS.TA.taD_LCRates = SIS.TA.taD_LCRates.GetForCityByIDorType(Record)
+                  .AmountRateOU = xLCRate.AmountPerKM
+                  tmpStr &= "Basic: " & .AmountRateOU
+                  If Record.StayedWithRelative Then
+                    .AmountRateOU += ((xLCRate.AmountPerKM * xLCRate.NightCharges) / 100)
+                    tmpStr &= ", NC: " & xLCRate.NightCharges & "%"
+                  End If
+                  If Record.StayedInGuestHouse Then
+                    .AmountRateOU += ((xLCRate.AmountPerKM * xLCRate.NonAvailabilityCharges) / 100)
+                    tmpStr &= ", NA: " & xLCRate.NonAvailabilityCharges & "%"
+                  End If
+                  .AmountFactor = .AmountRateOU * .ConversionFactorOU
+                  .AmountBasic = (.AmountFactor * .AmountRate)
+                  .AmountTaxOU = 0
+                  If Record.StayedAtSite Then
+                    .AmountTaxOU = xLCRate.FixedInterStateCharges
+                    tmpStr &= ", Toll: " & xLCRate.FixedInterStateCharges
+                  End If
+                  .AmountTax = .AmountTaxOU * .ConversionFactorOU
+                  .AmountTotal = (.AmountBasic + .AmountTax)
+                  .AmountInINR = .AmountTotal * .ConversionFactorINR
+                  .PassedAmountFactor = .AmountFactor
+                  .PassedAmountRate = .AmountRate
+                  .PassedAmountBasic = .AmountBasic
+                  .PassedAmountTax = .AmountTax
+                  .PassedAmountTotal = .AmountTotal
+                  .PassedAmountInINR = .AmountInINR
+                  .SystemText = " [Auto] Total KM: " & .AmountRate & " @: " & .AmountFactor.ToString("n") & " per KM. " & tmpStr & "]"
+                Case Else
+                  .AmountRate = 1
+                  .AmountFactor = .AmountRateOU * .ConversionFactorOU
+                  .AmountBasic = (.AmountFactor * .AmountRate)
+                  .AmountTaxOU = 0
+                  .AmountTax = .AmountTaxOU * .ConversionFactorOU
+                  .AmountTotal = (.AmountBasic + .AmountTax)
+                  .AmountInINR = .AmountTotal * .ConversionFactorINR
+                  .PassedAmountFactor = .AmountFactor
+                  .PassedAmountRate = .AmountRate
+                  .PassedAmountBasic = .AmountBasic
+                  .PassedAmountTax = .AmountTax
+                  .PassedAmountTotal = .AmountTotal
+                  .PassedAmountInINR = .AmountInINR
+              End Select
+            Case TATravelTypeValues.ForeignTravel, TATravelTypeValues.ForeignSiteVisit
+              .AmountRate = 1
+              .AmountFactor = .AmountRateOU * .ConversionFactorOU
+              .AmountBasic = (.AmountFactor * .AmountRate)
+              .AmountTaxOU = 0
+              .AmountTax = .AmountTaxOU * .ConversionFactorOU
+              .AmountTotal = (.AmountBasic + .AmountTax)
+              .AmountInINR = .AmountTotal * .ConversionFactorINR
+              .PassedAmountFactor = .AmountFactor
+              .PassedAmountRate = .AmountRate
+              .PassedAmountBasic = .AmountBasic
+              .PassedAmountTax = .AmountTax
+              .PassedAmountTotal = .AmountTotal
+              .PassedAmountInINR = .AmountInINR
+          End Select
+        End If
+        If .ModeLCID <> String.Empty AndAlso .ModeLCID <> "12" Then
           .ModeText = .FK_TA_BillDetails_ModeLCID.ModeName
         End If
-        .SystemText = "From " & .City1Text & " To " & .City2Text & " LC Mode " & .ModeText & " On " & .Date1Time
+        .SystemText = "From " & .FromAddress & " To " & .ToAddress & " LC Mode " & .ModeText & " On " & .Date1Time & .SystemText
       End With
       Dim _Result As SIS.TA.taBDLC = InsertData(Record)
       'taBH.ValidateTABill(Record.TABillNo)
       Return _Result
     End Function
     Public Shared Function UZ_taBDLCUpdate(ByVal Record As SIS.TA.taBDLC) As SIS.TA.taBDLC
+      Dim sBill As SIS.TA.taBH = Record.FK_TA_BillDetails_TABillNo
+      Dim xTmp As String = Record.ModeLCID
       With Record
-        .ComponentID = TAComponentTypes.LC
-        .AmountRate = 1
-        .AmountFactor = .AmountRateOU * .ConversionFactorOU
-        .AmountBasic = (.AmountFactor * .AmountRate)
-        .AmountTaxOU = 0
-        .AmountTax = .AmountTaxOU * .ConversionFactorOU
-        .AmountTotal = (.AmountBasic + .AmountTax)
-        .AmountInINR = .AmountTotal * .ConversionFactorINR
-        .PassedAmountFactor = .AmountFactor
-        .PassedAmountRate = .AmountRate
-        .PassedAmountBasic = .AmountBasic
-        .PassedAmountTax = .AmountTax
-        .PassedAmountTotal = .AmountTotal
-        .PassedAmountInINR = .AmountInINR
-        If .ModeLCID <> String.Empty Then
+        If Convert.ToDateTime(sBill.StartDateTime) < Convert.ToDateTime("15/03/2019") Then
+          .ComponentID = TAComponentTypes.LC
+          .AmountRate = 1
+          .AmountFactor = .AmountRateOU * .ConversionFactorOU
+          .AmountBasic = (.AmountFactor * .AmountRate)
+          .AmountTaxOU = 0
+          .AmountTax = .AmountTaxOU * .ConversionFactorOU
+          .AmountTotal = (.AmountBasic + .AmountTax)
+          .AmountInINR = .AmountTotal * .ConversionFactorINR
+          .PassedAmountFactor = .AmountFactor
+          .PassedAmountRate = .AmountRate
+          .PassedAmountBasic = .AmountBasic
+          .PassedAmountTax = .AmountTax
+          .PassedAmountTotal = .AmountTotal
+          .PassedAmountInINR = .AmountInINR
+        Else
+          Select Case sBill.TravelTypeID
+            Case TATravelTypeValues.Domestic, TATravelTypeValues.HomeVisit
+              Select Case xTmp
+                Case "1", "2", "3", "11"
+                  .ComponentID = TAComponentTypes.LC
+                  If .AmountRateOU = 0 Then
+                    'pick from mileage entitlement
+                    Dim LocationID As Integer = sBill.FK_TA_Bills_EmployeeID.C_OfficeID
+                    Dim cityID As String = ""
+                    Select Case LocationID
+                      Case 4 'Chennai
+                        cityID = "Chennai-TN"
+                      Case 5 'Pune
+                        cityID = "Pune-MH"
+                      Case 7 ' Kolkatta
+                        cityID = "Kolkata-WB"
+                      Case 8 'Mumbai
+                        cityID = "MumbaiCity-MH"
+                    End Select
+                    Dim tmp As SIS.TA.taD_Mileage = SIS.TA.taD_Mileage.GetByCategoryID(Convert.ToInt32(sBill.TACategoryID), cityID, Convert.ToDateTime(.Date1Time))
+                    If tmp IsNot Nothing Then
+                      .AmountRateOU = tmp.AmountPerKM
+                    End If
+                  End If
+                  .AmountFactor = .AmountRateOU * .ConversionFactorOU
+                  .AmountBasic = (.AmountFactor * .AmountRate)
+                  .AmountTaxOU = 0
+                  .AmountTax = .AmountTaxOU * .ConversionFactorOU
+                  .AmountTotal = (.AmountBasic + .AmountTax)
+                  .AmountInINR = .AmountTotal * .ConversionFactorINR
+                  .PassedAmountFactor = .AmountFactor
+                  .PassedAmountRate = .AmountRate
+                  .PassedAmountBasic = .AmountBasic
+                  .PassedAmountTax = .AmountTax
+                  .PassedAmountTotal = .AmountTotal
+                  .PassedAmountInINR = .AmountInINR
+                  .SystemText = " [Taxi] Total KM: " & .AmountRate & " @: " & .AmountFactor.ToString("n") & " per KM."
+                Case "4", "8"
+                  Dim tmpStr As String = "["
+                  .ComponentID = TAComponentTypes.LC
+                  Dim xLCRate As SIS.TA.taD_LCRates = SIS.TA.taD_LCRates.GetForCityByIDorType(Record)
+                  .AmountRateOU = xLCRate.AmountPerKM
+                  tmpStr &= "Basic: " & .AmountRateOU
+                  If Record.StayedWithRelative Then
+                    .AmountRateOU += ((xLCRate.AmountPerKM * xLCRate.NightCharges) / 100)
+                    tmpStr &= ", NC: " & xLCRate.NightCharges & "%"
+                  End If
+                  If Record.StayedInGuestHouse Then
+                    .AmountRateOU += ((xLCRate.AmountPerKM * xLCRate.NonAvailabilityCharges) / 100)
+                    tmpStr &= ", NA: " & xLCRate.NonAvailabilityCharges & "%"
+                  End If
+                  .AmountFactor = .AmountRateOU * .ConversionFactorOU
+                  .AmountBasic = (.AmountFactor * .AmountRate)
+                  .AmountTaxOU = 0
+                  If Record.StayedAtSite Then
+                    .AmountTaxOU = xLCRate.FixedInterStateCharges
+                    tmpStr &= ", Toll: " & xLCRate.FixedInterStateCharges
+                  End If
+                  .AmountTax = .AmountTaxOU * .ConversionFactorOU
+                  .AmountTotal = (.AmountBasic + .AmountTax)
+                  .AmountInINR = .AmountTotal * .ConversionFactorINR
+                  .PassedAmountFactor = .AmountFactor
+                  .PassedAmountRate = .AmountRate
+                  .PassedAmountBasic = .AmountBasic
+                  .PassedAmountTax = .AmountTax
+                  .PassedAmountTotal = .AmountTotal
+                  .PassedAmountInINR = .AmountInINR
+                  .SystemText = " [Auto] Total KM: " & .AmountRate & " @: " & .AmountFactor.ToString("n") & " per KM. " & tmpStr & "]"
+                Case Else
+                  .ComponentID = TAComponentTypes.LC
+                  .AmountRate = 1
+                  .AmountFactor = .AmountRateOU * .ConversionFactorOU
+                  .AmountBasic = (.AmountFactor * .AmountRate)
+                  .AmountTaxOU = 0
+                  .AmountTax = .AmountTaxOU * .ConversionFactorOU
+                  .AmountTotal = (.AmountBasic + .AmountTax)
+                  .AmountInINR = .AmountTotal * .ConversionFactorINR
+                  .PassedAmountFactor = .AmountFactor
+                  .PassedAmountRate = .AmountRate
+                  .PassedAmountBasic = .AmountBasic
+                  .PassedAmountTax = .AmountTax
+                  .PassedAmountTotal = .AmountTotal
+                  .PassedAmountInINR = .AmountInINR
+              End Select
+            Case TATravelTypeValues.ForeignTravel, TATravelTypeValues.ForeignSiteVisit
+              .ComponentID = TAComponentTypes.LC
+              .AmountRate = 1
+              .AmountFactor = .AmountRateOU * .ConversionFactorOU
+              .AmountBasic = (.AmountFactor * .AmountRate)
+              .AmountTaxOU = 0
+              .AmountTax = .AmountTaxOU * .ConversionFactorOU
+              .AmountTotal = (.AmountBasic + .AmountTax)
+              .AmountInINR = .AmountTotal * .ConversionFactorINR
+              .PassedAmountFactor = .AmountFactor
+              .PassedAmountRate = .AmountRate
+              .PassedAmountBasic = .AmountBasic
+              .PassedAmountTax = .AmountTax
+              .PassedAmountTotal = .AmountTotal
+              .PassedAmountInINR = .AmountInINR
+          End Select
+        End If
+        If .ModeLCID <> String.Empty AndAlso .ModeLCID <> "12" Then
           .ModeText = .FK_TA_BillDetails_ModeLCID.ModeName
         End If
-        .SystemText = "From " & .City1Text & " To " & .City2Text & " LC Mode " & .ModeText & " Duration " & .Date1Time & " - " & .Date2Time
+        .SystemText = "From " & .FromAddress & " To " & .ToAddress & " LC Mode " & .ModeText & " On " & .Date1Time & .SystemText
       End With
       Dim _Result As SIS.TA.taBDLC = UpdateData(Record)
       taBH.ValidateTABill(Record.TABillNo)

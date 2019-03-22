@@ -1,4 +1,4 @@
-<%@ Control Language="VB" AutoEventWireup="false" CodeFile="LC_spmtIsgecGSTIN.ascx.vb" Inherits="LC_spmtIsgecGSTIN" %>
+<%@ Control Language="VB" AutoEventWireup="false" ClientIDMode="Inherit" CodeFile="LC_spmtIsgecGSTIN.ascx.vb" Inherits="LC_spmtIsgecGSTIN" %>
 <asp:DropDownList 
   ID = "DDLspmtIsgecGSTIN"
   DataSourceID = "OdsDdlspmtIsgecGSTIN"
@@ -8,7 +8,7 @@
   CssClass = "myddl"
   Runat="server" />
 <asp:RequiredFieldValidator 
-  ID = "RequiredFieldValidatorspmtIsgecGSTIN"
+  ID = "RFVspmtIsgecGSTIN"
   Runat = "server" 
   ControlToValidate = "DDLspmtIsgecGSTIN"
   ErrorMessage = "<div class='errorLG'>Required!</div>"

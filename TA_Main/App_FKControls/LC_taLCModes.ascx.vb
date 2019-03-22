@@ -17,6 +17,14 @@ Partial Class LC_taLCModes
   Private _DefaultText As String = "-- Select --"
   Private _DefaultValue As String = String.Empty
   Public Event SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
+  Public Property GetDropDown As DropDownList
+    Get
+      Return DDLtaLCModes
+    End Get
+    Set(value As DropDownList)
+      DDLtaLCModes = value
+    End Set
+  End Property
   Public ReadOnly Property LCClientID() As String
     Get
       Return DDLtaLCModes.ClientID
