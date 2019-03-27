@@ -49,7 +49,13 @@
           if (sval.substr(sval.length - 15, 2) != txt.value.substr(0, 2)) {
             alert('State Code of ISGEC GSTIN & Supplier GSTIN should be same.');
             x.value = '';
-            //            x.focus();
+          } else {
+            if (txt.value != '') {
+              if (txt.value.length != 15) {
+                alert('Supplier GSTIN should have 15 Characters/digits.');
+                x.value = '';
+              }
+            }
           }
         }
       } else {
@@ -628,8 +634,8 @@
                     onfocus="return this.select();"
                     onblur="validate_gstin(this);"
                     ToolTip="Enter Supplier  GSTIN No."
-                    MaxLength="50"
-                    Width="408px"
+                    MaxLength="15"
+                    Width="200px"
                     ValidationGroup = "taBDLodging"
                     ClientIDMode="Static"
                     runat="server" />

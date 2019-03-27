@@ -3727,11 +3727,11 @@ Namespace SIS.TA
               oCol.Text = otaBDLodging.AssessableValue
               oRow.Cells.Add(oCol)
               oCol = New TableCell
-              oCol.Text = "Total GST:"
+              oCol.Text = "Total GST (SGST, CGST):"
               oCol.Font.Bold = True
               oRow.Cells.Add(oCol)
               oCol = New TableCell
-              oCol.Text = otaBDLodging.TotalGST
+              oCol.Text = otaBDLodging.TotalGST & " (" & otaBDLodging.SGSTAmount & ", " & otaBDLodging.CGSTAmount & ")"
               oRow.Cells.Add(oCol)
               oCol = New TableCell
               oCol.Text = "Total Amount:"
