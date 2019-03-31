@@ -60,6 +60,9 @@ Namespace SIS.TA
     End Function
     Public Shared Function UZ_taBDLCInsert(ByVal Record As SIS.TA.taBDLC) As SIS.TA.taBDLC
       Dim sBill As SIS.TA.taBH = Record.FK_TA_BillDetails_TABillNo
+      If sBill.StartDateTime = "" Then
+        Throw New Exception("Pl. enter FARE or Lodging record before Local Conveyance.")
+      End If
       Dim xTmp As String = Record.ModeLCID
       With Record
         .ComponentID = TAComponentTypes.LC
@@ -92,28 +95,31 @@ Namespace SIS.TA
           Select Case sBill.TravelTypeID
             Case TATravelTypeValues.Domestic, TATravelTypeValues.HomeVisit
               Select Case xTmp
-                Case "1", "2", "3", "11"
-                  If .AmountRateOU = 0 Then
-                    'pick from mileage entitlement
-                    Dim LocationID As Integer = sBill.FK_TA_Bills_EmployeeID.C_OfficeID
-                    Dim cityID As String = ""
-                    Select Case LocationID
-                      Case 4 'Chennai
-                        cityID = "Chennai-TN"
-                      Case 5 'Pune
-                        cityID = "Pune-MH"
-                      Case 7 ' Kolkatta
-                        cityID = "Kolkata-WB"
-                      Case 8 'Mumbai
-                        cityID = "MumbaiCity-MH"
-                    End Select
-                    Dim tmp As SIS.TA.taD_Mileage = SIS.TA.taD_Mileage.GetByCategoryID(Convert.ToInt32(sBill.TACategoryID), cityID, Convert.ToDateTime(.Date1Time))
-                    If tmp IsNot Nothing Then
-                      .AmountRateOU = tmp.AmountPerKM
-                    End If
-                  End If
-                  .AmountFactor = .AmountRateOU * .ConversionFactorOU
-                  .AmountBasic = (.AmountFactor * .AmountRate)
+                Case "1", "2", "3", "11" 'Taxi
+                  'If .AmountRateOU = 0 Then
+                  '  'pick from mileage entitlement
+                  '  Dim LocationID As Integer = sBill.FK_TA_Bills_EmployeeID.C_OfficeID
+                  '  Dim cityID As String = ""
+                  '  Select Case LocationID
+                  '    Case 4 'Chennai
+                  '      cityID = "Chennai-TN"
+                  '    Case 5 'Pune
+                  '      cityID = "Pune-MH"
+                  '    Case 7 ' Kolkatta
+                  '      cityID = "Kolkata-WB"
+                  '    Case 8 'Mumbai
+                  '      cityID = "MumbaiCity-MH"
+                  '  End Select
+                  '  Dim tmp As SIS.TA.taD_Mileage = SIS.TA.taD_Mileage.GetByCategoryID(Convert.ToInt32(sBill.TACategoryID), cityID, Convert.ToDateTime(.Date1Time))
+                  '  If tmp IsNot Nothing Then
+                  '    .AmountRateOU = tmp.AmountPerKM
+                  '  End If
+                  'End If
+
+                  .AmountFactor = (.AmountRateOU * .ConversionFactorOU) / .AmountRate
+                  'Stop multiplying KM, user will enter total amount
+                  '.AmountBasic = (.AmountFactor * .AmountRate)
+                  .AmountBasic = (.AmountRateOU * .ConversionFactorOU)
                   .AmountTaxOU = 0
                   .AmountTax = .AmountTaxOU * .ConversionFactorOU
                   .AmountTotal = (.AmountBasic + .AmountTax)
@@ -197,6 +203,9 @@ Namespace SIS.TA
     End Function
     Public Shared Function UZ_taBDLCUpdate(ByVal Record As SIS.TA.taBDLC) As SIS.TA.taBDLC
       Dim sBill As SIS.TA.taBH = Record.FK_TA_BillDetails_TABillNo
+      If sBill.StartDateTime = "" Then
+        Throw New Exception("Pl. enter FARE or Lodging record before Local Conveyance.")
+      End If
       Dim xTmp As String = Record.ModeLCID
       With Record
         If Convert.ToDateTime(sBill.StartDateTime) < Convert.ToDateTime("15/03/2019") Then
@@ -220,27 +229,27 @@ Namespace SIS.TA
               Select Case xTmp
                 Case "1", "2", "3", "11"
                   .ComponentID = TAComponentTypes.LC
-                  If .AmountRateOU = 0 Then
-                    'pick from mileage entitlement
-                    Dim LocationID As Integer = sBill.FK_TA_Bills_EmployeeID.C_OfficeID
-                    Dim cityID As String = ""
-                    Select Case LocationID
-                      Case 4 'Chennai
-                        cityID = "Chennai-TN"
-                      Case 5 'Pune
-                        cityID = "Pune-MH"
-                      Case 7 ' Kolkatta
-                        cityID = "Kolkata-WB"
-                      Case 8 'Mumbai
-                        cityID = "MumbaiCity-MH"
-                    End Select
-                    Dim tmp As SIS.TA.taD_Mileage = SIS.TA.taD_Mileage.GetByCategoryID(Convert.ToInt32(sBill.TACategoryID), cityID, Convert.ToDateTime(.Date1Time))
-                    If tmp IsNot Nothing Then
-                      .AmountRateOU = tmp.AmountPerKM
-                    End If
-                  End If
-                  .AmountFactor = .AmountRateOU * .ConversionFactorOU
-                  .AmountBasic = (.AmountFactor * .AmountRate)
+                  'If .AmountRateOU = 0 Then
+                  '  'pick from mileage entitlement
+                  '  Dim LocationID As Integer = sBill.FK_TA_Bills_EmployeeID.C_OfficeID
+                  '  Dim cityID As String = ""
+                  '  Select Case LocationID
+                  '    Case 4 'Chennai
+                  '      cityID = "Chennai-TN"
+                  '    Case 5 'Pune
+                  '      cityID = "Pune-MH"
+                  '    Case 7 ' Kolkatta
+                  '      cityID = "Kolkata-WB"
+                  '    Case 8 'Mumbai
+                  '      cityID = "MumbaiCity-MH"
+                  '  End Select
+                  '  Dim tmp As SIS.TA.taD_Mileage = SIS.TA.taD_Mileage.GetByCategoryID(Convert.ToInt32(sBill.TACategoryID), cityID, Convert.ToDateTime(.Date1Time))
+                  '  If tmp IsNot Nothing Then
+                  '    .AmountRateOU = tmp.AmountPerKM
+                  '  End If
+                  'End If
+                  .AmountFactor = (.AmountRateOU * .ConversionFactorOU) / .AmountRate
+                  .AmountBasic = (.AmountRateOU * .ConversionFactorOU)
                   .AmountTaxOU = 0
                   .AmountTax = .AmountTaxOU * .ConversionFactorOU
                   .AmountTotal = (.AmountBasic + .AmountTax)

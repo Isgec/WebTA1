@@ -191,6 +191,7 @@
         return false;
       }
     </script>
+    <asp:Label ID="sysWarn" runat="server" ForeColor="Red" Font-Size="14px" Font-Bold="true" Text="*** First Enter Fare Detail or Lodging Detail, before entering Local Conveyance. ***"></asp:Label>
     <asp:GridView ID="GVtaBH" SkinID="gv_silver" runat="server" DataSourceID="ODStaBH" DataKeyNames="TABillNo">
       <Columns>
         <asp:TemplateField HeaderText="EDIT">

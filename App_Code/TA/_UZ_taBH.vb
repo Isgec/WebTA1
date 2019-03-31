@@ -1576,6 +1576,12 @@ Namespace SIS.TA
                   sTmp.OOERemarks = "Bill is required."
                 End If
               End If
+              If sTmp.AmountInINR >= 1500 Then
+                With sTmp
+                  .OOEBySystem = True
+                  .OOERemarks = "Local Conveyance is 1500 or above, requires BH sanction."
+                End With
+              End If
             Else
               'Validation for Foreign Travel
               If sTmp.CurrencyID <> "INR" Then

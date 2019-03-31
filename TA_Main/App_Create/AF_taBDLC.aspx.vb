@@ -1,3 +1,4 @@
+Imports System.Web.Script.Serialization
 Partial Class AF_taBDLC
   Inherits SIS.SYS.GridBase
   Public Property dtMaskType As String
@@ -128,7 +129,7 @@ Partial Class AF_taBDLC
         CType(gvR.FindControl("F_AmountRate"), TextBox).Enabled = True
         CType(gvR.FindControl("F_AmountRate"), TextBox).CssClass = "mytxt"
         CType(gvR.FindControl("RVF_AmountRate"), RangeValidator).Enabled = True
-        CType(gvR.FindControl("L_RateAmount"), Label).Text = "Enter Rate/KM"
+        CType(gvR.FindControl("L_RateAmount"), Label).Text = "Enter Amount"
       Case "4", "8" ' Three Wheeler
         CType(gvR.FindControl("F_StayedWithRelative"), CheckBox).Enabled = True
         CType(gvR.FindControl("F_StayedInGuestHouse"), CheckBox).Enabled = True
@@ -222,6 +223,7 @@ Partial Class AF_taBDLC
     End If
   End Sub
   Private Sub TBLtaBDLC_SaveClicked(sender As Object, e As ImageClickEventArgs) Handles TBLtaBDLC.SaveClicked
+    Dim Calculate As Boolean = True
     With GVtaBDLC
       For Each r As GridViewRow In .Rows
         Dim x As SIS.TA.taBDLC = GetObjectFromRow(r)
@@ -229,12 +231,22 @@ Partial Class AF_taBDLC
           If x.ConversionFactorOU <= 0 Then x.ConversionFactorOU = 1
           x.TABillNo = F_TABillNo.Text
           x.SerialNo = 0
-          SIS.TA.taBDLC.UZ_taBDLCInsert(x)
+          Try
+            SIS.TA.taBDLC.UZ_taBDLCInsert(x)
+          Catch ex As Exception
+            Dim str As String = New JavaScriptSerializer().Serialize(ex.Message)
+            Dim script As String = String.Format("alert({0});", str)
+            ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", script, True)
+            Calculate = False
+            Exit For
+          End Try
         End If
       Next
-      SIS.TA.taBH.ValidateTABill(F_TABillNo.Text)
     End With
-    MyBase.Saved()
+    If Calculate Then
+      SIS.TA.taBH.ValidateTABill(F_TABillNo.Text)
+      MyBase.Saved()
+    End If
   End Sub
   Private Function GetObjectFromRow(ByVal r As GridViewRow) As SIS.TA.taBDLC
     On Error Resume Next
