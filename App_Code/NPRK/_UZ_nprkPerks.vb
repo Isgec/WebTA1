@@ -107,5 +107,22 @@ Namespace SIS.NPRK
       End Using
       Return Results
     End Function
+    Public Shared Function nprkPerksGetByDescription(ByVal Description As String) As SIS.NPRK.nprkPerks
+      Dim Results As SIS.NPRK.nprkPerks = Nothing
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.Text
+          Cmd.CommandText = "select top 1 * from PRK_Perks where lower(description) =lower('" & Description & "')"
+          Con.Open()
+          Dim Reader As SqlDataReader = Cmd.ExecuteReader()
+          If Reader.Read() Then
+            Results = New SIS.NPRK.nprkPerks(Reader)
+          End If
+          Reader.Close()
+        End Using
+      End Using
+      Return Results
+    End Function
+
   End Class
 End Namespace

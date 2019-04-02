@@ -253,14 +253,14 @@ Namespace SIS.NPRK
       End Using
       Return Results
     End Function
-    <DataObjectMethod(DataObjectMethodType.Select)> _
-    Public Shared Function GetByCategoryID(ByVal CategoryID As Int32, ByVal OrderBy as String) As List(Of SIS.NPRK.nprkRules)
+    <DataObjectMethod(DataObjectMethodType.Select)>
+    Public Shared Function GetByCategoryID(ByVal CategoryID As Int32, ByVal OrderBy As String) As List(Of SIS.NPRK.nprkRules)
       Dim Results As List(Of SIS.NPRK.nprkRules) = Nothing
       Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
         Using Cmd As SqlCommand = Con.CreateCommand()
           Cmd.CommandType = CommandType.StoredProcedure
           Cmd.CommandText = "spnprkRulesSelectByCategoryID"
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CategoryID",SqlDbType.Int,CategoryID.ToString.Length, CategoryID)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CategoryID", SqlDbType.Int, CategoryID.ToString.Length, CategoryID)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LoginID", SqlDbType.NvarChar, 9, HttpContext.Current.Session("LoginID"))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@OrderBy", SqlDbType.NVarChar, 50, OrderBy)
           Cmd.Parameters.Add("@RecordCount", SqlDbType.Int)
@@ -278,7 +278,7 @@ Namespace SIS.NPRK
       End Using
       Return Results
     End Function
-    <DataObjectMethod(DataObjectMethodType.Select)> _
+    <DataObjectMethod(DataObjectMethodType.Select)>
     Public Shared Function nprkRulesSelectList(ByVal StartRowIndex As Integer, ByVal MaximumRows As Integer, ByVal OrderBy As String, ByVal SearchState As Boolean, ByVal SearchText As String, ByVal PerkID As Int32, ByVal CategoryID As Int32) As List(Of SIS.NPRK.nprkRules)
       Dim Results As List(Of SIS.NPRK.nprkRules) = Nothing
       Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
@@ -289,12 +289,12 @@ Namespace SIS.NPRK
             SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@KeyWord", SqlDbType.NVarChar, 250, SearchText)
           Else
             Cmd.CommandText = "spnprkRulesSelectListFilteres"
-            SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Filter_PerkID",SqlDbType.Int,10, IIf(PerkID = Nothing, 0,PerkID))
-            SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Filter_CategoryID",SqlDbType.Int,10, IIf(CategoryID = Nothing, 0,CategoryID))
+            SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Filter_PerkID", SqlDbType.Int, 10, IIf(PerkID = Nothing, 0, PerkID))
+            SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Filter_CategoryID", SqlDbType.Int, 10, IIf(CategoryID = Nothing, 0, CategoryID))
           End If
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@StartRowIndex", SqlDbType.Int, -1, StartRowIndex)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@MaximumRows", SqlDbType.Int, -1, MaximumRows)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LoginID", SqlDbType.NvarChar, 9, HttpContext.Current.Session("LoginID"))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LoginID", SqlDbType.NVarChar, 9, HttpContext.Current.Session("LoginID"))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@OrderBy", SqlDbType.NVarChar, 50, OrderBy)
           Cmd.Parameters.Add("@RecordCount", SqlDbType.Int)
           Cmd.Parameters("@RecordCount").Direction = ParameterDirection.Output

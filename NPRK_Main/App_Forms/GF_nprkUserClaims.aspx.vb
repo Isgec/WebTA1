@@ -11,22 +11,23 @@ Partial Class GF_nprkUserClaims
       End Try
     End If
     If e.CommandName.ToLower = "initiatewf".ToLower Then
+      Dim maySubmit As Boolean = True
       Dim uList As String = ConfigurationManager.AppSettings("PerkUsers")
       If uList.Trim <> "*" Then
+        maySubmit = False
         Dim aUList() As String = uList.Split(",".ToCharArray)
-        Dim Found As Boolean = False
         Dim LoginID As String = HttpContext.Current.Session("LoginID")
         For Each usr As String In aUList
           If usr.Trim = LoginID Then
-            Found = True
+            maySubmit = True
             Exit For
           End If
         Next
-        If Not Found Then
-          Dim message As String = New JavaScriptSerializer().Serialize("Claim submission is stopped by Accounts.")
-          Dim script As String = String.Format("alert({0});", message)
-          ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", script, True)
-        End If
+      End If
+      If Not maySubmit Then
+        Dim message As String = New JavaScriptSerializer().Serialize("Claim submission is stopped by Accounts.")
+        Dim script As String = String.Format("alert({0});", message)
+        ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", script, True)
       Else
         Try
           Dim ClaimID As Int32 = GVnprkUserClaims.DataKeys(e.CommandArgument).Values("ClaimID")

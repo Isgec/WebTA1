@@ -76,11 +76,34 @@
     </table>
     </asp:Panel>
     <AJX:CollapsiblePanelExtender ID="cpe1" runat="Server" TargetControlID="pnlD" ExpandControlID="pnlH" CollapseControlID="pnlH" Collapsed="True" TextLabelID="lblH" ImageControlID="imgH" ExpandedText="(Hide Filters...)" CollapsedText="(Show Filters...)" ExpandedImage="~/images/ua.png" CollapsedImage="~/images/da.png" SuppressPostBack="true" />
+    <table>
+      <tr>
+        <td>
+          <asp:Button ID="cmdDownload" runat="server" ToolTip="Download Template File." Text="Download Template"  ></asp:Button>
+        </td>
+        <td>
+          <asp:Label runat="server" Font-Bold="true" ForeColor="BlueViolet" style="margin: 10px 10px auto 10px" Text="Upload Updated Perk Rules Template File." ></asp:Label>
+        </td>
+        <td style="text-align:center">
+          <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+            <ContentTemplate>
+              <asp:HiddenField ID="IsUploaded" runat="server" ClientIDMode="Static" ></asp:HiddenField>
+              <asp:FileUpload ID="F_FileUpload" runat="server" Width="250px" ToolTip="Browse Packing List Template" />
+              <asp:Button ID="cmdTmplUpload" Text="Upload" OnClientClick="$get('IsUploaded').value='YES';" runat="server" ToolTip="Click to upload & process template file." CommandName="tmplUpload" />
+            </ContentTemplate>
+            <Triggers>
+              <asp:PostBackTrigger ControlID="cmdTmplUpload" />
+            </Triggers>
+          </asp:UpdatePanel>
+        </td>
+      </tr>
+    </table>
+
     <asp:GridView ID="GVnprkRules" SkinID="gv_silver" runat="server" DataSourceID="ODSnprkRules" DataKeyNames="RuleID">
       <Columns>
         <asp:TemplateField HeaderText="EDIT">
           <ItemTemplate>
-            <asp:ImageButton ID="cmdEditPage" ValidationGroup="Edit" runat="server" Visible='<%# EVal("Visible") %>' Enabled='<%# EVal("Enable") %>' AlternateText="Edit" ToolTip="Edit the record." SkinID="Edit" CommandName="lgEdit" CommandArgument='<%# Container.DataItemIndex %>' />
+            <asp:ImageButton ID="cmdEditPage" ValidationGroup="Edit" runat="server" Visible='<%# Eval("Visible") %>' Enabled='<%# EVal("Enable") %>' AlternateText="Edit" ToolTip="Edit the record." SkinID="Edit" CommandName="lgEdit" CommandArgument='<%# Container.DataItemIndex %>' />
           </ItemTemplate>
           <ItemStyle CssClass="alignCenter" />
           <HeaderStyle HorizontalAlign="Center" Width="30px" />

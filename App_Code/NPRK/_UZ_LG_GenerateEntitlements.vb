@@ -160,6 +160,7 @@ Namespace SIS.NPRK.Utilities
           'End If 'Not LastRecordd
 
           If Not oRng.RuleFound Then Continue For
+          If oRng.PerkID = prkPerk.MedicalBenifit AndAlso oRng.VehicleType = "None" Then Continue For
 
           oEnt = New SIS.NPRK.nprkEntitlements
           With oEnt

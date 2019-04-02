@@ -37,6 +37,8 @@ Public Enum prkPerk
   VehicleRepairAndRunningExpense = 17
   MiscellaneousReimbursement = 18
   BalanceMedical = 19
+  NewUniform = 20
+  NewNewsPaper = 21
 End Enum
 
 Public Enum saClaimStates
