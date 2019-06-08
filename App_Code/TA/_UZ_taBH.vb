@@ -206,30 +206,86 @@ Namespace SIS.TA
       Dim pAmts As List(Of SIS.TA.taBillPrjAmounts) = SIS.TA.taBillPrjAmounts.taBillPrjAmountsSelectList(0, 999, "", False, "", TABillNo)
       For Each pAmt As SIS.TA.taBillPrjAmounts In pAmts
         Dim tmpSamt As Double = GetAvailableSanctionInERP(pAmt.ProjectID)
+        '=========TA Bills in Pipeline==========
+        Dim pipeAmt As Double = SIS.TA.taBH.GetPipeAmount(pAmt.ProjectID)
+        '=======================================
         If tmpSamt < 0 Then
           mRet = False
           Exit For
-        ElseIf tmpSamt - pAmt.TotalAmountinINR < 0 Then
+        ElseIf tmpSamt - pAmt.TotalAmountinINR - pipeAmt < 0 Then
           mRet = False
           Exit For
         End If
       Next
       Return mRet
     End Function
+    Public Shared Function GetPipeAmount(ByVal ProjectID As String) As Double
+      Dim Results As Double = 0
+      Dim Sql As String = ""
+      Sql &= " select isnull(sum(prj.TotalAmountInINR),0) as tot from TA_BillPrjAmounts as prj "
+      Sql &= " inner join TA_Bills as ta on ta.tabillno=prj.tabillno "
+      Sql &= " where ta.BillStatusID in (2,3,4,5,6,8,10,11,12,13,16) "
+      Sql &= " and prj.ProjectID='" & ProjectID & "'"
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.Text
+          Cmd.CommandText = Sql
+          Con.Open()
+          Results = Cmd.ExecuteScalar
+        End Using
+      End Using
+      Return Results
+    End Function
+    Public Shared Function GetPipeHTML(ByVal ProjectID As String) As String
+      Dim mRet As String = "<div style='max-height:100px;overflow-y:scroll;'><table style='margin:10px auto auto auto;' cellspacing='1' cellpadding='1' border='1'>"
+      mRet &= "<thead><tr><th>TA Bill No</th><th>Amount</th></tr></thead>"
+      Dim Pipes As List(Of SIS.TA.taBillPrjAmounts) = SIS.TA.taBH.GetPipeList(ProjectID)
+      For Each Pipe As SIS.TA.taBillPrjAmounts In Pipes
+        mRet &= "<tr><td>" & Pipe.TABillNo & "</td><td style='text-align:center'>" & Pipe.TotalAmountinINR.ToString("n") & "</td></tr>"
+      Next
+      mRet &= "</table></div>"
+      Return mRet
+    End Function
+    Public Shared Function GetPipeList(ByVal ProjectID As String) As List(Of SIS.TA.taBillPrjAmounts)
+      Dim Results As List(Of SIS.TA.taBillPrjAmounts) = Nothing
+      Dim Sql As String = ""
+      Sql &= " select * from TA_BillPrjAmounts as prj "
+      Sql &= " inner join TA_Bills as ta on ta.tabillno=prj.tabillno "
+      Sql &= " where ta.BillStatusID in (2,3,4,5,6,8,10,11,12,13,16) "
+      Sql &= " and prj.ProjectID='" & ProjectID & "'"
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.Text
+          Cmd.CommandText = Sql
+          _RecordCount = -1
+          Results = New List(Of SIS.TA.taBillPrjAmounts)()
+          Con.Open()
+          Dim Reader As SqlDataReader = Cmd.ExecuteReader()
+          While (Reader.Read())
+            Results.Add(New SIS.TA.taBillPrjAmounts(Reader))
+          End While
+          Reader.Close()
+          _RecordCount = Results.Count
+        End Using
+      End Using
+      Return Results
+    End Function
     Public Shared Function SanctionAvailableHTML(ByVal TABillNo As Integer) As String
       Dim mRet As String = "<table style='margin:20px auto auto auto;' cellspacing='1' cellpadding='1' border='1'>"
-      mRet &= "<thead><tr><th>Project</th><th>Element</th><th>Available Budget</th><th>Required in TA Bill</th><th>Balance<br/>[After this Bill]</th></tr></thead>"
+      mRet &= "<thead><tr><th>Project</th><th>Element</th><th>Available Budget</th><th>Already submitted<br/>TA Bills</th><th>Required in TA Bill</th><th>Balance<br/>[After this Bill]</th></tr></thead>"
       Dim pAmts As List(Of SIS.TA.taBillPrjAmounts) = SIS.TA.taBillPrjAmounts.taBillPrjAmountsSelectList(0, 999, "", False, "", TABillNo)
       If pAmts.Count <= 0 Then
-        mRet &= "<tr><td colspan='5' style='color:green;text-align:center;'>This TA Bill does not require Project Budget.</td></tr>"
+        mRet &= "<tr><td colspan='6' style='color:green;text-align:center;'>This TA Bill does not require Project Budget.</td></tr>"
       End If
       For Each pAmt As SIS.TA.taBillPrjAmounts In pAmts
         Dim Element As String = ""
         Dim tmpSamt As Double = GetAvailableSanctionInERP(pAmt.ProjectID, Element)
-        mRet &= "<tr><td>" & pAmt.ProjectID & "</td><td style='text-align:center'>" & Element & "</td><td style='text-align:center'>" & tmpSamt.ToString("n") & "</td><td style='text-align:center'>" & pAmt.TotalAmountinINR.ToString("n") & "</td><td style='text-align:center'>" & (tmpSamt - pAmt.TotalAmountinINR).ToString("n") & "</td></tr>"
+        Dim pipeAmt As Double = SIS.TA.taBH.GetPipeAmount(pAmt.ProjectID)
+        mRet &= "<tr><td>" & pAmt.ProjectID & "</td><td style='text-align:center'>" & Element & "</td><td style='text-align:center'>" & tmpSamt.ToString("n") & "</td><td style='text-align:center'>" & pipeAmt.ToString("n") & "</td><td style='text-align:center'>" & pAmt.TotalAmountinINR.ToString("n") & "</td><td style='text-align:center'>" & (tmpSamt - pAmt.TotalAmountinINR - pipeAmt).ToString("n") & "</td></tr>"
+        mRet &= "<tr><td colspan='6'>" & GetPipeHTML(pAmt.ProjectID) & "</td></tr>"
       Next
       If pAmts.Count > 0 Then
-        mRet &= "<tr><td colspan='5' style='color:red;'>NOTE:=&gt;TA Bill will NOT be submitted, if balance is negative in (any) project.<br/>Contact Project Manager to enter budget if required.</td></tr>"
+        mRet &= "<tr><td colspan='6' style='color:red;'>NOTE:=&gt;TA Bill will NOT be submitted, if balance is negative in (any) project.<br/>Contact Project Manager to enter budget if required.</td></tr>"
       End If
       mRet &= "</table>"
       Return mRet
