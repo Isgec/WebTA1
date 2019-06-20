@@ -121,8 +121,8 @@ Namespace SIS.NPRK
           oEnts.Sort(Function(x, y) Convert.ToDateTime(x.EffectiveDate, ci).CompareTo(Convert.ToDateTime(y.EffectiveDate, ci)))
           For I As Integer = oEnts.Count - 1 To 0 Step -1
             Dim tmp As SIS.NPRK.nprkEntitlements = oEnts(I)
-            If Not tmp.Selected Then
-              If inPay + tmp.Value <= CanPay Then
+            'If Not tmp.Selected Then
+            If inPay + tmp.Value <= CanPay Then
                 Dim tmpBill As New SIS.NPRK.nprkBillDetails
                 With tmpBill
                   .ClaimID = Record.ClaimID
@@ -145,7 +145,7 @@ Namespace SIS.NPRK
                 RequireClaimUpdate = True
                 inPay += tmp.Value
               End If
-            End If
+            'End If
           Next
       End Select
       If RequireClaimUpdate Then
