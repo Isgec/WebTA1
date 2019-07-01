@@ -114,6 +114,14 @@
         End If
       End If
     End Sub
+    Private Sub GridBase_Load(sender As Object, e As EventArgs) Handles Me.Load
+      If Not Page.IsPostBack And Not Page.IsCallback Then
+        Try
+          SIS.SYS.Utilities.SessionManager.PushNavBar(System.Web.HttpContext.Current.Request.Url.ToString)
+        Catch ex As Exception
+        End Try
+      End If
+    End Sub
   End Class
   Public MustInherit Class psGridBase
     Inherits System.Web.UI.Page

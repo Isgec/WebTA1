@@ -224,7 +224,8 @@ Namespace SIS.TA
       Dim Sql As String = ""
       Sql &= " select isnull(sum(prj.TotalAmountInINR),0) as tot from TA_BillPrjAmounts as prj "
       Sql &= " inner join TA_Bills as ta on ta.tabillno=prj.tabillno "
-      Sql &= " where ta.BillStatusID in (2,3,4,5,6,8,10,11,12,13,16) "
+      Sql &= " where ta.BillStatusID in (2,3,4,5,6,8,10,11,13,16) "
+      Sql &= " and 1 = case when ta.BillStatusID = 5 then case when (ta.VerifiedOn > convert(datetime,'03/12/2017',103)) then 1 else 0 end else 1 end"
       Sql &= " and prj.ProjectID='" & ProjectID & "'"
       Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
         Using Cmd As SqlCommand = Con.CreateCommand()
@@ -251,7 +252,8 @@ Namespace SIS.TA
       Dim Sql As String = ""
       Sql &= " select * from TA_BillPrjAmounts as prj "
       Sql &= " inner join TA_Bills as ta on ta.tabillno=prj.tabillno "
-      Sql &= " where ta.BillStatusID in (2,3,4,5,6,8,10,11,12,13,16) "
+      Sql &= " where ta.BillStatusID in (2,3,4,5,6,8,10,11,13,16) "
+      Sql &= " and 1 = case when ta.BillStatusID = 5 then case when (ta.VerifiedOn > convert(datetime,'03/12/2017',103)) then 1 else 0 end else 1 end"
       Sql &= " and prj.ProjectID='" & ProjectID & "'"
       Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
         Using Cmd As SqlCommand = Con.CreateCommand()

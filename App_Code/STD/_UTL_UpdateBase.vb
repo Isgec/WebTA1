@@ -137,7 +137,16 @@ Namespace SIS.SYS
 				Session("PageNo_" & FileName) = _FormView1.PageIndex
 			End If
 		End Sub
-	End Class
+    Private Sub UpdateBase_Load(sender As Object, e As EventArgs) Handles Me.Load
+      If Not Page.IsPostBack And Not Page.IsCallback Then
+        Try
+          SIS.SYS.Utilities.SessionManager.PushNavBar(System.Web.HttpContext.Current.Request.Url.ToString)
+        Catch ex As Exception
+        End Try
+      End If
+
+    End Sub
+  End Class
 End Namespace
 
 

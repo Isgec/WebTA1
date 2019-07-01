@@ -69,8 +69,6 @@ Namespace SIS.SYS
         Dim script As String = String.Format("alert({0});", str)
         ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", script, True)
       End If
-      'Response.Redirect("~/ErrorPage.aspx")
-
     End Sub
     Private Sub _ToolBar1_CancelClicked(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles _ToolBar1.CancelClicked
       Response.Redirect(SIS.SYS.Utilities.SessionManager.PopNavBar)
