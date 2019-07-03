@@ -109,6 +109,22 @@ Namespace SIS.NPRK
       End With
       Return sender
     End Function
+    Public Shared Function getMatchingDriverEntitlement(ByVal EmployeeID As Int32, ByVal FromDate As DateTime) As SIS.NPRK.nprkEntitlements
+      Dim Results As SIS.NPRK.nprkEntitlements = Nothing
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.Text
+          Cmd.CommandText = "select top 1 * from PRK_Entitlements where perkid=10 and employeeid=" & EmployeeID & " and month(effectivedate)=" & FromDate.Month & " and year(effectivedate)=" & FromDate.Year
+          Con.Open()
+          Dim Reader As SqlDataReader = Cmd.ExecuteReader()
+          If Reader.Read() Then
+            Results = New SIS.NPRK.nprkEntitlements(Reader)
+          End If
+          Reader.Close()
+        End Using
+      End Using
+      Return Results
+    End Function
     Public Shared Function GetByEmployeeIDPerkID(ByVal EmployeeID As Int32, ByVal PerkID As Int32) As List(Of SIS.NPRK.nprkEntitlements)
       Dim Results As List(Of SIS.NPRK.nprkEntitlements) = Nothing
       Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())

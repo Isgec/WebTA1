@@ -91,10 +91,10 @@ Namespace SIS.SYS.Utilities
       End Sub
     End Class
     Public Shared Sub InitNavBar()
-      HttpContext.Current.Session("NavBar") = New List(Of lgNavBar)
+      HttpContext.Current.Session("tmpNavBar") = New List(Of lgNavBar)
     End Sub
     Public Shared Sub PushNavBar(ByVal Target As String)
-      Dim tmpNav As List(Of lgNavBar) = HttpContext.Current.Session("NavBar")
+      Dim tmpNav As List(Of lgNavBar) = HttpContext.Current.Session("tmpNavBar")
       Dim Found As Boolean = False
       For Each x As lgNavBar In tmpNav
         If x.Target = Target Then
@@ -112,19 +112,19 @@ Namespace SIS.SYS.Utilities
       Else
         tmpNav.Add(New lgNavBar(Target))
       End If
-      HttpContext.Current.Session("NavBar") = tmpNav
+      HttpContext.Current.Session("tmpNavBar") = tmpNav
     End Sub
     Public Shared Function PopNavBar(Optional ByVal IsBack As Boolean = False) As String
       Dim mRet As String = HttpContext.Current.Session("ApplicationDefaultPage")
       Dim tmp As lgNavBar = Nothing
-      Dim tmpNav As List(Of lgNavBar) = HttpContext.Current.Session("NavBar")
+      Dim tmpNav As List(Of lgNavBar) = HttpContext.Current.Session("tmpNavBar")
       If IsBack Then
         If tmpNav.Count > 1 Then
           mRet = tmpNav(tmpNav.Count - 2).Target
         End If
       Else
-        If tmpNav.Count > 0 Then
-          mRet = tmpNav(tmpNav.Count - 1).Target
+        If tmpNav.Count > 1 Then
+          mRet = tmpNav(tmpNav.Count - 2).Target
         End If
       End If
       Return mRet
@@ -248,7 +248,7 @@ Namespace SIS.SYS.Utilities
                 End If
               Case Else    '"GF_", "GT_", "GU_", "GP_"
                 If Reader("MaintainGrid") Then
-                  SYS.Utilities.SessionManager.InitNavBar()
+                  'SYS.Utilities.SessionManager.InitNavBar()
                   _Result = True
                 End If
             End Select

@@ -18,10 +18,12 @@ Public MustInherit Class ToolBar0
 	Public Event DeleteClicked(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
 	Public Event AddClicked(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
 	Public Event CancelClicked(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
-	Public Sub RaisePageChanged(ByVal NewPageNo As Integer, ByVal PageSize As Integer)
-		RaiseEvent PageChanged(NewPageNo, PageSize)
-	End Sub
-	Public Sub RaiseSearchClicked(ByVal SearchText As String, ByVal SearchState As Boolean)
+  'Public Event ForwardClicked(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
+  'Public Event ReturnClicked(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
+  Public Sub RaisePageChanged(ByVal NewPageNo As Integer, ByVal PageSize As Integer)
+    RaiseEvent PageChanged(NewPageNo, PageSize)
+  End Sub
+  Public Sub RaiseSearchClicked(ByVal SearchText As String, ByVal SearchState As Boolean)
 		RaiseEvent SearchClicked(SearchText, SearchState)
 	End Sub
   Public Sub RaiseSaveClicked(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
@@ -37,6 +39,12 @@ Public MustInherit Class ToolBar0
 	Public Sub RaiseCancelClicked(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
 		RaiseEvent CancelClicked(sender, e)
 	End Sub
+  'Public Sub RaiseForwardClicked(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
+  '  RaiseEvent ForwardClicked(sender, e)
+  'End Sub
+  'Public Sub RaiseReturnClicked(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
+  '  RaiseEvent ReturnClicked(sender, e)
+  'End Sub
 End Class
 
 Public MustInherit Class IpsBar

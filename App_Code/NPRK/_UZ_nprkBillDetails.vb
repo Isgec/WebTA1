@@ -217,25 +217,27 @@ Namespace SIS.NPRK
       End With
       If _Rec.FK_PRK_BillDetails_PRK_Applications.PerkID = prkPerk.DriverCharges Then
         If _Rec.FK_PRK_BillDetails_PRK_Applications.FK_PRK_Applications_PRK_Employees.CategoryID > 2 Then
-          If _Rec.EntitlementID <> String.Empty Then
-            Dim tmpEnt As SIS.NPRK.nprkEntitlements = SIS.NPRK.nprkEntitlements.nprkEntitlementsGetByID(_Rec.EntitlementID)
-            If _Rec.WithDriver = Record.WithDriver Then
-            ElseIf Not _Rec.WithDriver And Record.WithDriver Then
-              _Rec.Quantity += tmpEnt.AdditionalValue
-              _Rec.Amount += tmpEnt.AdditionalValue
-              _Rec.WithDriver = True
-              tmpEnt.Value += tmpEnt.AdditionalValue
-              tmpEnt.WithDriver = True
-              SIS.NPRK.nprkEntitlements.UpdateData(tmpEnt)
-            ElseIf _Rec.WithDriver And Not Record.WithDriver Then
-              _Rec.Quantity -= tmpEnt.AdditionalValue
-              _Rec.Amount -= tmpEnt.AdditionalValue
-              _Rec.WithDriver = False
-              tmpEnt.Value -= tmpEnt.AdditionalValue
-              tmpEnt.WithDriver = False
-              SIS.NPRK.nprkEntitlements.UpdateData(tmpEnt)
-            End If
+          'If _Rec.EntitlementID <> String.Empty Then
+          'Dim tmpEnt As SIS.NPRK.nprkEntitlements = SIS.NPRK.nprkEntitlements.nprkEntitlementsGetByID(_Rec.EntitlementID)
+          Dim tmpEnt As SIS.NPRK.nprkEntitlements = SIS.NPRK.nprkEntitlements.getMatchingDriverEntitlement(_Rec.FK_PRK_BillDetails_PRK_Applications.EmployeeID, _Rec.FromDate)
+          If tmpEnt.AdditionalValue <= 0 Then Record.WithDriver = False
+          If _Rec.WithDriver = Record.WithDriver Then
+          ElseIf Not _Rec.WithDriver And Record.WithDriver Then
+            _Rec.Quantity += tmpEnt.AdditionalValue
+            _Rec.Amount += tmpEnt.AdditionalValue
+            _Rec.WithDriver = Record.WithDriver
+            tmpEnt.Value += tmpEnt.AdditionalValue
+            tmpEnt.WithDriver = Record.WithDriver
+            SIS.NPRK.nprkEntitlements.UpdateData(tmpEnt)
+          ElseIf _Rec.WithDriver And Not Record.WithDriver Then
+            _Rec.Quantity -= tmpEnt.AdditionalValue
+            _Rec.Amount -= tmpEnt.AdditionalValue
+            _Rec.WithDriver = Record.WithDriver
+            tmpEnt.Value -= tmpEnt.AdditionalValue
+            tmpEnt.WithDriver = Record.WithDriver
+            SIS.NPRK.nprkEntitlements.UpdateData(tmpEnt)
           End If
+          'End If
         End If
       End If
       Record = SIS.NPRK.nprkBillDetails.UpdateData(_Rec)

@@ -74,8 +74,8 @@ Namespace SIS.SYS
       'Response.Redirect("~/ErrorPage.aspx")
     End Sub
 		Private Sub _ToolBar1_CancelClicked(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles _ToolBar1.CancelClicked
-			Response.Redirect(SIS.SYS.Utilities.SessionManager.PopNavBar())
-		End Sub
+      Response.Redirect(SIS.SYS.Utilities.SessionManager.PopNavBar())
+    End Sub
 		Private Sub _ToolBar1_DeleteClicked(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles _ToolBar1.DeleteClicked
 			_FormView1.DeleteItem()
 		End Sub
@@ -120,8 +120,8 @@ Namespace SIS.SYS
 			If e.Exception Is Nothing Then
 				If Not _ToolBar1.UpdateAndStay Then
 					If _ToolBar1.AfterUpdateURL = String.Empty Then
-						Response.Redirect(SIS.SYS.Utilities.SessionManager.PopNavBar())
-					Else
+            Response.Redirect(SIS.SYS.Utilities.SessionManager.PopNavBar())
+          Else
 						Response.Redirect(_ToolBar1.AfterUpdateURL)
 					End If
 				End If

@@ -83,7 +83,7 @@
       End Try
     End Sub
     Private Sub _ToolBar1_CancelClicked(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles _ToolBar1.CancelClicked
-      Response.Redirect(SIS.SYS.Utilities.SessionManager.PopNavBar)
+      Response.Redirect(SIS.SYS.Utilities.SessionManager.PopNavBar())
     End Sub
     Private Sub _ToolBar1_PageChanged(ByVal NewPageNo As Integer, ByVal PageSize As Integer) Handles _ToolBar1.PageChanged
       If NewPageNo < 0 Then NewPageNo = 0
@@ -330,5 +330,13 @@
 			CType(_GridView1.DataSourceObject, ObjectDataSource).SelectParameters("SearchState").DefaultValue = SearchState
 			CType(_GridView1.DataSourceObject, ObjectDataSource).SelectParameters("SearchText").DefaultValue = SearchText
 		End Sub
-	End Class
+    Private Sub GridBase_Load(sender As Object, e As EventArgs) Handles Me.Load
+      If Not Page.IsPostBack And Not Page.IsCallback Then
+        Try
+          SIS.SYS.Utilities.SessionManager.PushNavBar(System.Web.HttpContext.Current.Request.Url.ToString)
+        Catch ex As Exception
+        End Try
+      End If
+    End Sub
+  End Class
 End Namespace
