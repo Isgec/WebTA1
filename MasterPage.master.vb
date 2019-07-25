@@ -39,9 +39,5 @@ Partial Class lgMasterPage
       ToolkitScriptManager1.AsyncPostBackErrorMessage = e.Exception.Message
     End If
   End Sub
-
-  Private Sub LoginLine1_SignOut(sender As Object, e As EventArgs) Handles LoginLine1.SignOut
-
-  End Sub
 End Class
 

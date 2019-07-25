@@ -9,7 +9,7 @@
 							<asp:ImageButton ID="CmdExit" ToolTip="Exit" AccessKey="X" runat="server" ImageUrl="~/TblImages/can0.png" />
 						</td>
 						<td class="mnu_but">
-							<asp:ImageButton ID="CmdSave" ToolTip="Save" AccessKey="S" runat="server" ImageUrl="~/TblImages/sav0.png" />
+							<asp:ImageButton ID="CmdSave" ToolTip="Save" AccessKey="S" runat="server" ImageUrl="~/TblImages/sav0.png" OnClientClick="var canBeSaved=false; try{canBeSaved=validateSave();}catch(e){canBeSaved=true;} return canBeSaved;" />
 						</td>
 						<td class="mnu_but">
 							<asp:ImageButton ID="CmdAdd" ToolTip="Add new record" AccessKey="A" runat="server" ImageUrl="~/TblImages/add0.png" />

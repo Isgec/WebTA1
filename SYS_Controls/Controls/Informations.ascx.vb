@@ -3,6 +3,9 @@ Partial Class Informations
   Inherits System.Web.UI.UserControl
   Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
     If HttpContext.Current.User.Identity.IsAuthenticated Then
+      If HttpContext.Current.Session("LoginID") Is Nothing Then
+        Response.Redirect("~/Default.aspx")
+      End If
       Dim oEmp As SIS.TA.taEmployees = SIS.TA.taEmployees.taEmployeesGetByID(HttpContext.Current.User.Identity.Name)
       If Not oEmp Is Nothing Then
         F_EmployeeName.Text = oEmp.EmployeeName

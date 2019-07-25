@@ -64,6 +64,22 @@
       }
     }
   </script>
+<script>
+  function validateSave() {
+    if (!$get('F_BoardingProvided').checked
+        && !$get('F_LodgingProvided').checked
+        && !$get('F_StayedInHotel').checked
+        && !$get('F_StayedAtSite').checked
+        && !$get('F_NotStayedAnyWhere').checked
+        && !$get('F_StayedInGuestHouse').checked
+        && !$get('F_StayedWithRelative').checked
+        ) {
+      alert('Pl. select atleast one STAY option.');
+      return false;
+    }
+    return true;
+  }
+</script>
 
   <div id="div1" class="ui-widget-content page">
 <div id="div2" class="caption">
@@ -319,6 +335,7 @@
         <td>
           <asp:CheckBox ID="F_BoardingProvided"
            Checked='<%# Bind("BoardingProvided") %>'
+           ClientIDMode="Static"
            CssClass = "mychk"
            runat="server" />
         </td>
@@ -328,6 +345,7 @@
         <td>
           <asp:CheckBox ID="F_LodgingProvided"
            Checked='<%# Bind("LodgingProvided") %>'
+            ClientIDMode="Static"
            CssClass = "mychk"
            runat="server" />
         </td>
@@ -339,6 +357,7 @@
         <td>
           <asp:CheckBox ID="F_StayedWithRelative"
            Checked='<%# Bind("StayedWithRelative") %>'
+            ClientIDMode="Static"
            CssClass = "mychk"
            runat="server" />
         </td>
@@ -350,6 +369,7 @@
            Checked='<%# Bind("StayedInHotel") %>' 
            AutoPostBack="true"
            OnCheckedChanged="StayedInHotel_CheckedChanged"
+            ClientIDMode="Static"
            CssClass = "mychk"
            runat="server" />
         </td>
@@ -361,6 +381,7 @@
         <td>
           <asp:CheckBox ID="F_StayedAtSite"
            Checked='<%# Bind("StayedAtSite") %>'
+            ClientIDMode="Static"
            CssClass = "mychk"
            runat="server" />
         </td>
@@ -370,6 +391,7 @@
         <td>
           <asp:CheckBox ID="F_StayedInGuestHouse"
            Checked='<%# Bind("StayedInGuestHouse") %>'
+            ClientIDMode="Static"
            CssClass = "mychk"
            runat="server" />
         </td>
@@ -381,6 +403,7 @@
         <td>
           <asp:CheckBox ID="F_NotStayedAnyWhere"
            Checked='<%# Bind("NotStayedAnyWhere") %>'
+            ClientIDMode="Static"
            CssClass = "mychk"
            runat="server" />
         </td>
