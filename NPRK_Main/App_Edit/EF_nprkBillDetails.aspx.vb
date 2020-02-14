@@ -53,6 +53,7 @@ Partial Class EF_nprkBillDetails
       ViewState.Add("PrimaryKey", value)
     End Set
   End Property
+  Dim systemGenerated As Boolean = False
   Protected Sub ODSnprkBillDetails_Selected(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs) Handles ODSnprkBillDetails.Selected
     Dim tmp As SIS.NPRK.nprkBillDetails = CType(e.ReturnValue, SIS.NPRK.nprkBillDetails)
     Editable = tmp.Editable
@@ -67,6 +68,10 @@ Partial Class EF_nprkBillDetails
     Else
       Enabled = True
     End If
+    If tmp.Particulars = "## System Generated" Then
+      systemGenerated = True
+    End If
+
   End Sub
   Protected Sub FVnprkBillDetails_Init(ByVal sender As Object, ByVal e As System.EventArgs) Handles FVnprkBillDetails.Init
     DataClassName = "EnprkBillDetails"
@@ -91,6 +96,10 @@ Partial Class EF_nprkBillDetails
     Dim ApplicationID As Integer = CType(Request.QueryString("ApplicationID"), Integer)
     SIS.NPRK.nprkBillDetails.CustomizeView(FVnprkBillDetails, ClaimID, ApplicationID)
     '======End Customization================
+    If systemGenerated Then
+      CType(FVnprkBillDetails.FindControl("F_Amount"), TextBox).Enabled = False
+      CType(FVnprkBillDetails.FindControl("rowWithDriver"), HtmlTableRow).Attributes.Add("style", "display:none;")
+    End If
   End Sub
   Protected Sub DateChanged(ByVal sender As Object, ByVal e As System.EventArgs)
     SIS.NPRK.nprkBillDetails.ValidateData(FVnprkBillDetails, sender)

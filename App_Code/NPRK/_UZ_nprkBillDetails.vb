@@ -217,8 +217,6 @@ Namespace SIS.NPRK
       End With
       If _Rec.FK_PRK_BillDetails_PRK_Applications.PerkID = prkPerk.DriverCharges Then
         If _Rec.FK_PRK_BillDetails_PRK_Applications.FK_PRK_Applications_PRK_Employees.CategoryID > 2 Then
-          'If _Rec.EntitlementID <> String.Empty Then
-          'Dim tmpEnt As SIS.NPRK.nprkEntitlements = SIS.NPRK.nprkEntitlements.nprkEntitlementsGetByID(_Rec.EntitlementID)
           Dim tmpEnt As SIS.NPRK.nprkEntitlements = SIS.NPRK.nprkEntitlements.getMatchingDriverEntitlement(_Rec.FK_PRK_BillDetails_PRK_Applications.EmployeeID, _Rec.FromDate)
           If tmpEnt.AdditionalValue <= 0 Then Record.WithDriver = False
           If _Rec.WithDriver = Record.WithDriver Then
@@ -237,7 +235,6 @@ Namespace SIS.NPRK
             tmpEnt.WithDriver = Record.WithDriver
             SIS.NPRK.nprkEntitlements.UpdateData(tmpEnt)
           End If
-          'End If
         End If
       End If
       Record = SIS.NPRK.nprkBillDetails.UpdateData(_Rec)
@@ -248,8 +245,11 @@ Namespace SIS.NPRK
       Dim oPrk As SIS.NPRK.nprkPerks = Record.FK_PRK_BillDetails_PRK_Applications.FK_PRK_Applications_PRK_Perks
       Select Case oPrk.PerkID
         Case prkPerk.DriverCharges
-          Record.Description = oPrk.Description & " for the period, from " & Record.FromDate & " to " & Record.ToDate
-          Record.Particulars = Record.Description
+          If Record.Particulars <> "## System Generated" Then
+            Record.Description = oPrk.Description & " for the period, from " & Record.FromDate & " to " & Record.ToDate
+            Record.Particulars = Record.Description
+          End If
+
         Case prkPerk.Mediclaim
           Record.Description = oPrk.Description & " for the policy period, from " & Record.FromDate & " to " & Record.ToDate
         Case prkPerk.NewspaperMagazine, prkPerk.Uniform, prkPerk.Petrol, prkPerk.CarMaintenance, prkPerk.TwoWheelerMaint, prkPerk.MedicalBenifit

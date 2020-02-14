@@ -19,7 +19,6 @@ Partial Class lgMasterPage
         tmp.Close()
       End If
     End If
-
   End Sub
   Public Function GetRelativePath(ByVal mPath As String) As String
     Return VirtualPathUtility.MakeRelative(Page.AppRelativeVirtualPath, mPath)

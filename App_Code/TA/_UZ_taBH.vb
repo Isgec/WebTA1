@@ -1639,10 +1639,13 @@ Namespace SIS.TA
                 End If
               End If
               If sTmp.AmountInINR >= 1500 Then
-                With sTmp
-                  .OOEBySystem = True
-                  .OOERemarks = "Local Conveyance is 1500 or above, requires BH sanction."
-                End With
+                Select Case sBill.TravelTypeID
+                  Case TATravelTypeValues.Domestic, TATravelTypeValues.HomeVisit
+                    With sTmp
+                      .OOEBySystem = True
+                      .OOERemarks = "Local Conveyance is 1500 or above, requires BH sanction."
+                    End With
+                End Select
               End If
             Else
               'Validation for Foreign Travel

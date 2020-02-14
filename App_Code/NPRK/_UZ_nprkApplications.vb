@@ -117,36 +117,55 @@ Namespace SIS.NPRK
           Dim CanPay As Decimal = SIS.NPRK.nprkPerks.GetNetPayable(Record.EmployeeID, Record.PerkID, Record.FinYear)
           CanPay += 1
           Dim inPay As Decimal = 0
+          Dim unpaidBal As Decimal = 0
           Dim oEnts As List(Of SIS.NPRK.nprkEntitlements) = SIS.NPRK.nprkEntitlements.GetByEmployeeIDPerkID(Record.EmployeeID, Record.PerkID)
           oEnts.Sort(Function(x, y) Convert.ToDateTime(x.EffectiveDate, ci).CompareTo(Convert.ToDateTime(y.EffectiveDate, ci)))
           For I As Integer = oEnts.Count - 1 To 0 Step -1
             Dim tmp As SIS.NPRK.nprkEntitlements = oEnts(I)
-            'If Not tmp.Selected Then
             If inPay + tmp.Value <= CanPay Then
-                Dim tmpBill As New SIS.NPRK.nprkBillDetails
-                With tmpBill
-                  .ClaimID = Record.ClaimID
-                  .ApplicationID = Record.ApplicationID
-                  .AttachmentID = 0
-                  .SerialNo = 0
-                  .ClaimRefNo = Record.ClaimRefNo
-                  .FromDate = Convert.ToDateTime("01/" & Convert.ToDateTime(tmp.EffectiveDate, ci).Month.ToString.PadLeft(2, "0") & "/" & Convert.ToDateTime(tmp.EffectiveDate, ci).Year)
-                  .ToDate = tmp.EffectiveDate
-                  .Quantity = tmp.Value
-                  .Amount = tmp.Value
-                  .VerifiedByAdmin = False
-                  .EntitlementID = tmp.EntitlementID
-                  .PerkID = tmp.PerkID
-                  .WithDriver = tmp.WithDriver
-                End With
-                tmpBill = SIS.NPRK.nprkBillDetails.UZ_nprkBillDetailsInsert(tmpBill)
-                tmp.Selected = True
-                SIS.NPRK.nprkEntitlements.UpdateData(tmp)
-                RequireClaimUpdate = True
-                inPay += tmp.Value
-              End If
-            'End If
+              Dim tmpBill As New SIS.NPRK.nprkBillDetails
+              With tmpBill
+                .ClaimID = Record.ClaimID
+                .ApplicationID = Record.ApplicationID
+                .AttachmentID = 0
+                .SerialNo = 0
+                .ClaimRefNo = Record.ClaimRefNo
+                .FromDate = Convert.ToDateTime("01/" & Convert.ToDateTime(tmp.EffectiveDate, ci).Month.ToString.PadLeft(2, "0") & "/" & Convert.ToDateTime(tmp.EffectiveDate, ci).Year)
+                .ToDate = tmp.EffectiveDate
+                .Quantity = tmp.Value
+                .Amount = tmp.Value
+                .VerifiedByAdmin = False
+                .EntitlementID = tmp.EntitlementID
+                .PerkID = tmp.PerkID
+                .WithDriver = tmp.WithDriver
+              End With
+              tmpBill = SIS.NPRK.nprkBillDetails.UZ_nprkBillDetailsInsert(tmpBill)
+              tmp.Selected = True
+              SIS.NPRK.nprkEntitlements.UpdateData(tmp)
+              RequireClaimUpdate = True
+              inPay += tmp.Value
+            End If
           Next
+          unpaidBal = CanPay - inPay - 1
+          If unpaidBal > 1 Then
+            Dim tmpBill As New SIS.NPRK.nprkBillDetails
+            With tmpBill
+              .ClaimID = Record.ClaimID
+              .ApplicationID = Record.ApplicationID
+              .AttachmentID = 0
+              .SerialNo = 0
+              .ClaimRefNo = Record.ClaimRefNo
+              .FromDate = Now
+              .ToDate = Now
+              .Quantity = unpaidBal
+              .Amount = unpaidBal
+              .VerifiedByAdmin = False
+              .PerkID = prkPerk.DriverCharges
+              .WithDriver = False
+              .Particulars = "## System Generated"
+            End With
+            tmpBill = SIS.NPRK.nprkBillDetails.UZ_nprkBillDetailsInsert(tmpBill)
+          End If
       End Select
       If RequireClaimUpdate Then
         SIS.NPRK.nprkUserClaims.ValidateClaim(Record.ClaimID)

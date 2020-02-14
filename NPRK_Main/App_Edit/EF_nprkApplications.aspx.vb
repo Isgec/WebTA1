@@ -135,6 +135,7 @@ Partial Class EF_nprkApplications
         Dim ClaimID As Int32 = GVnprkBillDetails.DataKeys(e.CommandArgument).Values("ClaimID")
         Dim ApplicationID As Int32 = GVnprkBillDetails.DataKeys(e.CommandArgument).Values("ApplicationID")
         Dim AttachmentID As Int32 = GVnprkBillDetails.DataKeys(e.CommandArgument).Values("AttachmentID")
+        Dim xRec As SIS.NPRK.nprkBillDetails = SIS.NPRK.nprkBillDetails.nprkBillDetailsGetByID(ClaimID, ApplicationID, AttachmentID)
         Dim RedirectUrl As String = TBLnprkBillDetails.EditUrl & "?ClaimID=" & ClaimID & "&ApplicationID=" & ApplicationID & "&AttachmentID=" & AttachmentID
         Response.Redirect(RedirectUrl)
       Catch ex As Exception

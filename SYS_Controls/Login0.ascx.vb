@@ -39,10 +39,9 @@ Partial Class Login0
 			End If
 		End If
 	End Sub
-	Public Sub LoggedOut(ByVal sender As Object, ByVal e As System.EventArgs)
+  Public Sub LoggedOut(ByVal sender As Object, ByVal e As System.EventArgs)
     RaiseEvent SignOut(sender, e)
     SIS.SYS.Utilities.SessionManager.DestroySessionEnvironement()
     Response.Redirect("~/Default.aspx")
-
   End Sub
 End Class

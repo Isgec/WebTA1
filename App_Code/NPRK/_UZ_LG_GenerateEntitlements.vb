@@ -182,7 +182,7 @@ Namespace SIS.NPRK.Utilities
           If oPrk.PerkID = prkPerk.DriverCharges Then
             For Each de As SIS.NPRK.nprkEntitlements In driverEnt
               If de.EffectiveDate = oEnt.EffectiveDate Then
-                oEnt.Value = de.Value
+                'oEnt.Value = de.Value
                 oEnt.WithDriver = de.WithDriver
                 oEnt.Selected = de.Selected
                 If de.WithDriver Then
@@ -241,7 +241,7 @@ Namespace SIS.NPRK.Utilities
                       If oPrk.PerkID = prkPerk.DriverCharges Then
                         For Each de As SIS.NPRK.nprkEntitlements In driverEnt
                           If de.EffectiveDate = osEnt.EffectiveDate Then
-                            osEnt.Value = de.Value
+                            'osEnt.Value = de.Value
                             osEnt.WithDriver = de.WithDriver
                             osEnt.Selected = de.Selected
                             If de.WithDriver Then
@@ -295,7 +295,7 @@ Namespace SIS.NPRK.Utilities
                       If oPrk.PerkID = prkPerk.DriverCharges Then
                         For Each de As SIS.NPRK.nprkEntitlements In driverEnt
                           If de.EffectiveDate = osEnt.EffectiveDate Then
-                            osEnt.Value = de.Value
+                            'osEnt.Value = de.Value
                             osEnt.WithDriver = de.WithDriver
                             osEnt.Selected = de.Selected
                             If de.WithDriver Then
