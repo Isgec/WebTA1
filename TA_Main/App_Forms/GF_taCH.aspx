@@ -437,7 +437,7 @@
                       <asp:ListItem Value="99080500" Text="99080500"></asp:ListItem>
                       <asp:ListItem Value="99080200" Text="99080200"></asp:ListItem>
                       <asp:ListItem Value="99020500" Text="99020500"></asp:ListItem>
-                      <asp:ListItem Value="99250100" Text="99250100"></asp:ListItem>
+                      <asp:ListItem Selected="True" Value="99250100" Text="99250100"></asp:ListItem>
                     </asp:DropDownList>
                   </td>
                 </tr>
