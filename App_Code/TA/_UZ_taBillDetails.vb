@@ -6,6 +6,34 @@ Imports System.ComponentModel
 Namespace SIS.TA
   Partial Public Class taBillDetails
     Implements ICloneable
+    'AS Linked in Joomla
+    Public ReadOnly Property GetAttachLink() As String
+      Get
+        Dim UrlAuthority As String = HttpContext.Current.Request.Url.Authority
+        If UrlAuthority.ToLower <> "cloud.isgec.co.in" Then
+          UrlAuthority = "192.9.200.146"
+        End If
+        Dim mRet As String = HttpContext.Current.Request.Url.Scheme & Uri.SchemeDelimiter & UrlAuthority
+        mRet &= "/Attachment/Attachment.aspx?AthHandle=J_TABILLDETAIL"
+        Dim Index As String = TABillNo & "_" & SerialNo
+        Dim User As String = HttpContext.Current.Session("LoginID")
+        'User = 1
+        Dim canEdit As String = "n"
+        If Editable Then
+          canEdit = "y"
+        End If
+        mRet &= "&Index=" & Index & "&AttachedBy=" & User & "&ed=" & canEdit
+        mRet = "javascript:window.open('" & mRet & "', 'win_" & SerialNo & "', 'left=20,top=20,width=600,height=400,toolbar=0,resizable=1,scrollbars=1'); return false;"
+
+        Return mRet
+      End Get
+    End Property
+    'Public ReadOnly Property GetDownloadLink() As String
+    '  Get
+    '    Return "javascript:window.open('" & HttpContext.Current.Request.Url.Scheme & Uri.SchemeDelimiter & HttpContext.Current.Request.Url.Authority & HttpContext.Current.Request.ApplicationPath & "/PAK_Main/App_Downloads/filedownload.aspx?stcpolrd=" & PrimaryKey & "', 'win" & DocSerialNo & "', 'left=20,top=20,width=100,height=100,toolbar=1,resizable=1,scrollbars=1'); return false;"
+    '  End Get
+    'End Property
+
     Public Function Clone() As Object Implements System.ICloneable.Clone
       Return MyBase.MemberwiseClone()
     End Function

@@ -723,7 +723,7 @@
                         pcnt = pcnt + 1;
                         var nam = 'wTask' + pcnt;
                         var url = o.getAttribute('CommandValue');
-                        window.open(url, nam, 'left=20,top=20,width=1100,height=600,toolbar=1,resizable=1,scrollbars=1');
+                        window.open(url, nam, 'left=20,top=20,width=600,height=400,toolbar=0,resizable=1,scrollbars=1');
                         return false;
                       }
                     </script>
@@ -1225,7 +1225,7 @@
             <asp:Label ID="LabelSystemText" runat="server" ForeColor='<%# Eval("ForeColor") %>' Text='<%# Bind("SystemText") %>'></asp:Label>
           </ItemTemplate>
           <ItemStyle CssClass="" />
-        <HeaderStyle CssClass="" Width="100px" />
+        <HeaderStyle CssClass="" Width="300px" />
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Claimed Amount" SortExpression="AmountTotal">
           <ItemTemplate>
@@ -1247,6 +1247,13 @@
           </ItemTemplate>
           <ItemStyle CssClass="" />
         <HeaderStyle CssClass="" Width="100px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Attatch Bill">
+          <ItemTemplate>
+            <asp:ImageButton ID="cmdAttach" runat="server" AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attach scanned or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
+          </ItemTemplate>
+          <ItemStyle CssClass="alignCenter" />
+          <HeaderStyle HorizontalAlign="Center" Width="30px" />
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Delete">
           <ItemTemplate>
@@ -1337,7 +1344,7 @@
             <asp:Label ID="LabelSystemText" runat="server" ForeColor='<%# Eval("ForeColor") %>' Text='<%# Bind("SystemText") %>'></asp:Label>
           </ItemTemplate>
           <ItemStyle CssClass="" />
-        <HeaderStyle CssClass="" Width="100px" />
+        <HeaderStyle CssClass="" Width="300px" />
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Claimed Amount" SortExpression="AmountTotal">
           <ItemTemplate>
@@ -1359,6 +1366,13 @@
           </ItemTemplate>
           <ItemStyle CssClass="" />
         <HeaderStyle CssClass="" Width="100px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Attatch Bill">
+          <ItemTemplate>
+            <asp:ImageButton ID="cmdAttach" runat="server" AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attach scanned or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
+          </ItemTemplate>
+          <ItemStyle CssClass="alignCenter" />
+          <HeaderStyle HorizontalAlign="Center" Width="30px" />
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Delete">
           <ItemTemplate>
@@ -1449,7 +1463,7 @@
             <asp:Label ID="LabelSystemText" runat="server" ForeColor='<%# Eval("ForeColor") %>' Text='<%# Bind("SystemText") %>'></asp:Label>
           </ItemTemplate>
           <ItemStyle CssClass="" />
-        <HeaderStyle CssClass="" Width="100px" />
+        <HeaderStyle CssClass="" Width="300px" />
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Claimed Amount" SortExpression="AmountTotal">
           <ItemTemplate>
@@ -1471,6 +1485,13 @@
           </ItemTemplate>
           <ItemStyle CssClass="" />
         <HeaderStyle CssClass="" Width="100px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Attatch Bill">
+          <ItemTemplate>
+            <asp:ImageButton ID="cmdAttach" runat="server" AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attach scanned or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
+          </ItemTemplate>
+          <ItemStyle CssClass="alignCenter" />
+          <HeaderStyle HorizontalAlign="Center" Width="30px" />
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Delete">
           <ItemTemplate>
@@ -1673,7 +1694,7 @@
             <asp:Label ID="LabelSystemText" runat="server" ForeColor='<%# Eval("ForeColor") %>' Text='<%# Bind("SystemText") %>'></asp:Label>
           </ItemTemplate>
           <ItemStyle CssClass="" />
-        <HeaderStyle CssClass="" Width="100px" />
+        <HeaderStyle CssClass="" Width="300px" />
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Claimed Amount" SortExpression="AmountTotal">
           <ItemTemplate>
@@ -1695,6 +1716,13 @@
           </ItemTemplate>
           <ItemStyle CssClass="" />
         <HeaderStyle CssClass="" Width="100px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Attatch Bill">
+          <ItemTemplate>
+            <asp:ImageButton ID="cmdAttach" runat="server" AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attach scanned or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
+          </ItemTemplate>
+          <ItemStyle CssClass="alignCenter" />
+          <HeaderStyle HorizontalAlign="Center" Width="30px" />
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Delete">
           <ItemTemplate>
@@ -1808,6 +1836,13 @@
           <ItemStyle CssClass="" />
         <HeaderStyle CssClass="" Width="100px" />
         </asp:TemplateField>
+        <asp:TemplateField HeaderText="Attatch Bill">
+          <ItemTemplate>
+            <asp:ImageButton ID="cmdAttach" runat="server" AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attach scanned or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
+          </ItemTemplate>
+          <ItemStyle CssClass="alignCenter" />
+          <HeaderStyle HorizontalAlign="Center" Width="30px" />
+        </asp:TemplateField>
         <asp:TemplateField HeaderText="Delete">
           <ItemTemplate>
             <asp:ImageButton ID="cmdDelete" ValidationGroup='<%# "Delete" & Container.DataItemIndex %>' CausesValidation="true" runat="server" Visible='<%# EVal("DeleteWFVisible") %>' Enabled='<%# EVal("DeleteWFEnable") %>' AlternateText='<%# EVal("PrimaryKey") %>' ToolTip="Delete" SkinID="Delete" OnClientClick='<%# "return Page_ClientValidate(""Delete" & Container.DataItemIndex & """) && confirm(""Delete record ?"");" %>' CommandName="DeleteWF" CommandArgument='<%# Container.DataItemIndex %>' />
@@ -1919,6 +1954,13 @@
           </ItemTemplate>
           <ItemStyle CssClass="" />
         <HeaderStyle CssClass="" Width="100px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Attatch Bill">
+          <ItemTemplate>
+            <asp:ImageButton ID="cmdAttach" runat="server" AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attach scanned or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
+          </ItemTemplate>
+          <ItemStyle CssClass="alignCenter" />
+          <HeaderStyle HorizontalAlign="Center" Width="30px" />
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Delete">
           <ItemTemplate>
