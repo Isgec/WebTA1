@@ -2139,7 +2139,9 @@ Namespace SIS.TA
             CountryID = sBill.FK_TA_Bills_DestinationCity.CountryID
           End If
           If Not CountryID = "Bangladesh" Then
-            AddContingencyAllowance(sBill)
+            If sBill.StartDateTime <> "" AndAlso Convert.ToDateTime(sBill.StartDateTime) <= Convert.ToDateTime("10/05/2020 23:59:59.999") Then
+              AddContingencyAllowance(sBill)
+            End If
           End If
         End If
       End If
