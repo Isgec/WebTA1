@@ -7,6 +7,11 @@ Namespace SIS.TA
   Partial Public Class taBillDetails
     Implements ICloneable
     'AS Linked in Joomla
+    Public ReadOnly Property AttachVisible() As Boolean
+      Get
+        Return SIS.SYS.Utilities.ApplicationSpacific.IsAttached(TABillNo & "_" & SerialNo, "J_TABILLDETAIL")
+      End Get
+    End Property
     Public ReadOnly Property GetAttachLink() As String
       Get
         Dim UrlAuthority As String = HttpContext.Current.Request.Url.Authority

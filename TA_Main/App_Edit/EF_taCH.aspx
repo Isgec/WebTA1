@@ -1149,7 +1149,7 @@
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Attatched Bill">
                                   <ItemTemplate>
-                                    <asp:ImageButton ID="cmdAttach" runat="server" AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attached Bill or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
+                                    <asp:ImageButton ID="cmdAttach" runat="server" Visible='<%# Eval("AttachVisible") %>' AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attached Bill or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
                                   </ItemTemplate>
                                   <ItemStyle CssClass="alignCenter" />
                                   <HeaderStyle HorizontalAlign="Center" Width="30px" />
@@ -1261,7 +1261,7 @@
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Attatched Bill">
                                   <ItemTemplate>
-                                    <asp:ImageButton ID="cmdAttach" runat="server" AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attached Bill or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
+                                    <asp:ImageButton ID="cmdAttach" runat="server" Visible='<%# Eval("AttachVisible") %>' AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attached Bill or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
                                   </ItemTemplate>
                                   <ItemStyle CssClass="alignCenter" />
                                   <HeaderStyle HorizontalAlign="Center" Width="30px" />
@@ -1373,7 +1373,7 @@
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Attatched Bill">
                                   <ItemTemplate>
-                                    <asp:ImageButton ID="cmdAttach" runat="server" AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attached Bill or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
+                                    <asp:ImageButton ID="cmdAttach" runat="server" Visible='<%# Eval("AttachVisible") %>' AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attached Bill or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
                                   </ItemTemplate>
                                   <ItemStyle CssClass="alignCenter" />
                                   <HeaderStyle HorizontalAlign="Center" Width="30px" />
@@ -1486,18 +1486,18 @@
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Attatched Bill">
                                   <ItemTemplate>
-                                    <asp:ImageButton ID="cmdAttach" runat="server" AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attached Bill or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
+                                    <asp:ImageButton ID="cmdAttach" runat="server"  Visible='<%# Eval("AttachVisible") %>' AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attached Bill or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
                                   </ItemTemplate>
                                   <ItemStyle CssClass="alignCenter" />
                                   <HeaderStyle HorizontalAlign="Center" Width="30px" />
                                 </asp:TemplateField>
                                 <%--        <asp:TemplateField HeaderText="Delete">
-          <ItemTemplate>
-            <asp:ImageButton ID="cmdDelete" ValidationGroup='<%# "Delete" & Container.DataItemIndex %>' CausesValidation="true" runat="server" Visible='<%# EVal("DeleteWFVisible") %>' Enabled='<%# EVal("DeleteWFEnable") %>' AlternateText='<%# EVal("PrimaryKey") %>' ToolTip="Delete" SkinID="Delete" OnClientClick='<%# "return Page_ClientValidate(""Delete" & Container.DataItemIndex & """) && confirm(""Delete record ?"");" %>' CommandName="DeleteWF" CommandArgument='<%# Container.DataItemIndex %>' />
-          </ItemTemplate>
-          <ItemStyle CssClass="alignCenter" />
-          <HeaderStyle HorizontalAlign="Center" Width="30px" />
-        </asp:TemplateField>--%>
+                                  <ItemTemplate>
+                                    <asp:ImageButton ID="cmdDelete" ValidationGroup='<%# "Delete" & Container.DataItemIndex %>' CausesValidation="true" runat="server" Visible='<%# EVal("DeleteWFVisible") %>' Enabled='<%# EVal("DeleteWFEnable") %>' AlternateText='<%# EVal("PrimaryKey") %>' ToolTip="Delete" SkinID="Delete" OnClientClick='<%# "return Page_ClientValidate(""Delete" & Container.DataItemIndex & """) && confirm(""Delete record ?"");" %>' CommandName="DeleteWF" CommandArgument='<%# Container.DataItemIndex %>' />
+                                  </ItemTemplate>
+                                  <ItemStyle CssClass="alignCenter" />
+                                  <HeaderStyle HorizontalAlign="Center" Width="30px" />
+                                </asp:TemplateField>--%>
                               </Columns>
                               <EmptyDataTemplate>
                                 <asp:Label ID="LabelEmpty" runat="server" Font-Size="Small" ForeColor="Red" Text="No record found !!!"></asp:Label>
@@ -1606,7 +1606,7 @@
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Attatched Bill">
                                   <ItemTemplate>
-                                    <asp:ImageButton ID="cmdAttach" runat="server" AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attached Bill or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
+                                    <asp:ImageButton ID="cmdAttach" runat="server" Visible='<%# Eval("AttachVisible") %>' AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attached Bill or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
                                   </ItemTemplate>
                                   <ItemStyle CssClass="alignCenter" />
                                   <HeaderStyle HorizontalAlign="Center" Width="30px" />
@@ -1725,7 +1725,7 @@
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Attatched Bill">
                                   <ItemTemplate>
-                                    <asp:ImageButton ID="cmdAttach" runat="server" AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attached Bill or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
+                                    <asp:ImageButton ID="cmdAttach" runat="server" Visible='<%# Eval("AttachVisible") %>' AlternateText='<%# Eval("PrimaryKey") %>' ToolTip="Attached Bill or Image of Bill." SkinID="attach" OnClientClick='<%# Eval("GetAttachLink") %>' />
                                   </ItemTemplate>
                                   <ItemStyle CssClass="alignCenter" />
                                   <HeaderStyle HorizontalAlign="Center" Width="30px" />
