@@ -12,7 +12,6 @@
   <script type="text/javascript">
     $(function () {
       $(".page").resizable();
-      //$(".page").draggable();
     });
   </script>
   <asp:ContentPlaceHolder ID="cphMain" runat="server" EnableViewState="true">
@@ -68,7 +67,7 @@
         </td>
       </tr>
       <tr>
-        <td colspan="2" class="sis_body" runat="server" id="mainBody">
+        <td colspan="2" class="wp_body" runat="server" id="mainBody">
           <asp:ContentPlaceHolder ID="cph1" runat="server" EnableViewState="true">
           </asp:ContentPlaceHolder>
         </td>
@@ -78,12 +77,12 @@
           <table style="width: 100%">
             <tr>
               <td>
-                <span style="color:#ffffff;font-size:9px;">© ISGEC Heavy Engineering Limited. All rights reserved.</span>
+                <span style="color: #ffffff"><font size="1">© ISGEC Heavy Engineering Limited. All rights reserved.</font></span>
               </td>
             </tr>
             <tr>
               <td>
-                <span style="color: #ffffff;font-size:9px;">A-4, Sector-24, NOIDA, U.P. 201 301, INDIA </span>
+                <font size="1"><span style="color: #ffffff">A-4, Sector-24, NOIDA, U.P. 201 301, INDIA </span></font>
               </td>
             </tr>
             <tr>

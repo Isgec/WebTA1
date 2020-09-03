@@ -155,7 +155,7 @@ Namespace SIS.SPMT
       ERP.t_type = Rec.TranTypeID
       ERP.t_isup = Rec.BillNumber
       ERP.t_idat = Rec.BillDate
-      ERP.t_brmk = Rec.BillRemarks
+      ERP.t_brmk = Rec.BillRemarks.Replace(Chr(13), " ").Replace(Chr(10), " ").Replace(":", " ")
       ERP.t_brac = Rec.RemarksAC
       ERP.t_payd = Rec.AdviceNo
       ERP.t_hodc = Rec.ConcernedHOD

@@ -133,8 +133,8 @@ Namespace SIS.NPRK
           sDt = "01/04/" & Now.Year
           eDt = "01/07/" & Now.Year
         Case 7, 8, 9
-          'sDt = "01/07/" & Now.Year
-          sDt = "25/08/" & Now.Year
+          sDt = "01/07/" & Now.Year
+          'sDt = "25/08/" & Now.Year
           eDt = "01/10/" & Now.Year
         Case 10, 11, 12
           sDt = "01/10/" & Now.Year
