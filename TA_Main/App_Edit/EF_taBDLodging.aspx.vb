@@ -1,3 +1,4 @@
+Imports System.Web.Script.Serialization
 Partial Class EF_taBDLodging
   Inherits SIS.SYS.UpdateBase
   Public Property TravelType As String
@@ -212,4 +213,12 @@ Partial Class EF_taBDLodging
     End If
     Return mRet
   End Function
+  Private Sub FVtaBDLodging_ItemUpdating(sender As Object, e As FormViewUpdateEventArgs) Handles FVtaBDLodging.ItemUpdating
+    Try
+      SIS.TA.taBDLodging.ValidateTmp(New SIS.TA.taBDLodging(e.NewValues))
+    Catch ex As Exception
+      ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", String.Format("alert({0});", New JavaScriptSerializer().Serialize(ex.Message)), True)
+      e.Cancel = True
+    End Try
+  End Sub
 End Class

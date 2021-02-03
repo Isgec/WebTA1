@@ -1,3 +1,4 @@
+Imports System.Web.Script.Serialization
 Partial Class EF_taBDFare
   Inherits SIS.SYS.UpdateBase
   Public Property Editable() As Boolean
@@ -166,5 +167,13 @@ Partial Class EF_taBDFare
   Public Shared Function Country2IDCompletionList(ByVal prefixText As String, ByVal count As Integer, ByVal contextKey As String) As String()
     Return SIS.TA.taCountries.SelecttaCountriesAutoCompleteList(prefixText, count, contextKey)
   End Function
+  Private Sub FVtaBDFare_ItemUpdating(sender As Object, e As FormViewUpdateEventArgs) Handles FVtaBDFare.ItemUpdating
+    Try
+      SIS.TA.taBDFare.ValidateFare(New SIS.TA.taBDFare(e.NewValues))
+    Catch ex As Exception
+      ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", String.Format("alert({0});", New JavaScriptSerializer().Serialize(ex.Message)), True)
+      e.Cancel = True
+    End Try
+  End Sub
 
 End Class

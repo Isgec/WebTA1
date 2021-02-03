@@ -207,4 +207,12 @@ Partial Class AF_taBDLodging
     End If
     Return mRet
   End Function
+  Private Sub FVtaBDLodging_ItemInserting(sender As Object, e As FormViewInsertEventArgs) Handles FVtaBDLodging.ItemInserting
+    Try
+      SIS.TA.taBDLodging.ValidateTmp(New SIS.TA.taBDLodging(e.Values))
+    Catch ex As Exception
+      ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", String.Format("alert({0});", New JavaScriptSerializer().Serialize(ex.Message)), True)
+      e.Cancel = True
+    End Try
+  End Sub
 End Class

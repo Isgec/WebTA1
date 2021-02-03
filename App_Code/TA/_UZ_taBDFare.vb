@@ -178,5 +178,38 @@ Namespace SIS.TA
       taBH.ValidateTABill(Record.TABillNo)
       Return _Result
     End Function
+    Public Sub New(v As IOrderedDictionary)
+      Try
+        For Each pi As System.Reflection.PropertyInfo In Me.GetType.GetProperties
+          If pi.MemberType = Reflection.MemberTypes.Property Then
+            Try
+              Dim Found As Boolean = False
+              For I As Integer = 0 To v.Count - 1
+                If v.Keys(I).ToLower = pi.Name.ToLower Then
+                  Found = True
+                  Exit For
+                End If
+              Next
+              If Found Then
+                If Convert.IsDBNull(v.Item(pi.Name)) Then
+                  Select Case Type.GetTypeCode(pi.PropertyType)
+                    Case TypeCode.Decimal, TypeCode.Double
+                      CallByName(Me, pi.Name, CallType.Let, "0.00")
+                    Case TypeCode.Boolean
+                      CallByName(Me, pi.Name, CallType.Let, Boolean.FalseString)
+                    Case Else
+                      CallByName(Me, pi.Name, CallType.Let, String.Empty)
+                  End Select
+                Else
+                  CallByName(Me, pi.Name, CallType.Let, v.Item(pi.Name))
+                End If
+              End If
+            Catch ex As Exception
+            End Try
+          End If
+        Next
+      Catch ex As Exception
+      End Try
+    End Sub
   End Class
 End Namespace

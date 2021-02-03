@@ -998,6 +998,28 @@ Namespace SIS.TA
         End Select
       Next
     End Sub
+    Private Shared Sub ValidateMileage(ByVal sBill As SIS.TA.taBH, ByVal sTmps As List(Of SIS.TA.taBillDetails))
+      For Each sTmp As SIS.TA.taBillDetails In sTmps
+        Select Case sTmp.ComponentID
+          Case TAComponentTypes.Mileage
+            With sTmp
+              .OOEBySystem = False
+              .OOERemarks = ""
+            End With
+            If sBill.TravelTypeID = TATravelTypeValues.Domestic Or sTmp.IsDomestic Or sBill.TravelTypeID = TATravelTypeValues.HomeVisit Then
+              If sBill.TACategoryID > 7 Then 'Below Manager
+                With sTmp
+                  If .AmountInINR > 0 Then
+                    .OOEBySystem = True
+                    .OOERemarks = "Own Car requires Special Approval."
+                  End If
+                End With
+              End If
+            End If
+            SIS.TA.taBillDetails.UpdateData(sTmp)
+        End Select
+      Next
+    End Sub
     Private Shared Sub ValidateLodging(ByVal sBill As SIS.TA.taBH, ByVal sTmps As List(Of SIS.TA.taBillDetails))
       Dim ci As System.Globalization.CultureInfo = SIS.SYS.Utilities.SessionManager.ci
       For Each sTmp As SIS.TA.taBillDetails In sTmps
@@ -1210,7 +1232,7 @@ Namespace SIS.TA
         TrainingProgramDA(sBill)
       Else   'Normal DA
         If sBill.TravelTypeID = TATravelTypeValues.Domestic Then
-          If sBill.FK_TA_Bills_EmployeeID.C_OfficeID = "6" Then
+          If sBill.FK_TA_Bills_EmployeeID.C_OfficeID = "6" AndAlso sBill.FK_TA_Bills_EmployeeID.C_DivisionID <> "CSF" Then
             If sBill.SiteTransfer Then
               Dim LimitDays As Decimal = 15 'Limit DA days for domestic site employee 
               'On site transfer case onlt, other wise they are paid site allowance
@@ -2116,7 +2138,10 @@ Namespace SIS.TA
       End Select
 
       '1. Validate Fare Record for Travel Mode. NO Dependancy
+      '1.A
       ValidateFare(sBill, sTmps)
+      '1.B
+      ValidateMileage(sBill, sTmps)
       '2. Validate Lodging before DA Calculation
       ValidateLodging(sBill, sTmps)
       '3. Calculate DA before LC Mode [Domestic]-No dependancy, Foreign LC-Dependancy on TOTAL DA's 20%
