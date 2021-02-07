@@ -1232,7 +1232,7 @@ Namespace SIS.TA
         TrainingProgramDA(sBill)
       Else   'Normal DA
         If sBill.TravelTypeID = TATravelTypeValues.Domestic Then
-          If sBill.FK_TA_Bills_EmployeeID.C_OfficeID = "6" AndAlso sBill.FK_TA_Bills_EmployeeID.C_DivisionID <> "CSF" Then
+          If sBill.FK_TA_Bills_EmployeeID.C_OfficeID = "6" AndAlso sBill.FK_TA_Bills_EmployeeID.FieldExpeditor = False Then
             If sBill.SiteTransfer Then
               Dim LimitDays As Decimal = 15 'Limit DA days for domestic site employee 
               'On site transfer case onlt, other wise they are paid site allowance
@@ -5155,6 +5155,30 @@ Namespace SIS.TA
     End Function
 
 #End Region
+
+    Public Shared Function taBHDateRangeSelectList(FromDate As DateTime, ToDate As DateTime) As List(Of SIS.TA.taBH)
+      Dim Results As List(Of SIS.TA.taBH) = Nothing
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.StoredProcedure
+          Cmd.CommandText = "spta_LG_BHDateRangeSelectList"
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FromDate", SqlDbType.DateTime, 21, FromDate)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ToDate", SqlDbType.DateTime, 21, ToDate)
+          Cmd.Parameters.Add("@RecordCount", SqlDbType.Int)
+          Cmd.Parameters("@RecordCount").Direction = ParameterDirection.Output
+          _RecordCount = -1
+          Results = New List(Of SIS.TA.taBH)()
+          Con.Open()
+          Dim Reader As SqlDataReader = Cmd.ExecuteReader()
+          While (Reader.Read())
+            Results.Add(New SIS.TA.taBH(Reader))
+          End While
+          Reader.Close()
+          _RecordCount = Cmd.Parameters("@RecordCount").Value
+        End Using
+      End Using
+      Return Results
+    End Function
 
   End Class
 

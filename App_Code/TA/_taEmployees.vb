@@ -44,6 +44,7 @@ Namespace SIS.TA
     Private _FK_HRM_Employees_TAApprover As SIS.TA.taEmployees = Nothing
     Private _FK_HRM_Employees_TASanctioningAuthority As SIS.TA.taEmployees = Nothing
     Private _FK_HRM_Employees_SiteAllowanceApprover As SIS.TA.taEmployees = Nothing
+    Public Property FieldExpeditor As Boolean = False
     Public ReadOnly Property ForeColor() As System.Drawing.Color
       Get
         Dim mRet As System.Drawing.Color = Drawing.Color.Blue
