@@ -1007,7 +1007,7 @@ Namespace SIS.TA
               .OOERemarks = ""
             End With
             If sBill.TravelTypeID = TATravelTypeValues.Domestic Or sTmp.IsDomestic Or sBill.TravelTypeID = TATravelTypeValues.HomeVisit Then
-              If sBill.TACategoryID > 7 Then 'Below Manager
+              If sBill.TACategoryID > 8 Then 'Below DM/AM 
                 With sTmp
                   If .AmountInINR > 0 Then
                     .OOEBySystem = True
