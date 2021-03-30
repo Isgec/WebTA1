@@ -72,9 +72,15 @@ Partial Class RP_TABillAuditReport
           c += 1
           .Cells(r, c).Value = tmp.FK_TA_Bills_EmployeeID.EmployeeName
           c += 1
+          .Cells(r, c).Value = tmp.FK_TA_Bills_TACategoryID.CategoryDescription
+          c += 1
           .Cells(r, c).Value = tmp.TABillNo
           c += 1
           .Cells(r, c).Value = tmp.ForwardedOn
+          c += 1
+          .Cells(r, c).Value = tmp.ProjectID & " " & IIf(tmp.ProjectID <> "", tmp.FK_TA_Bills_ProjectID.Description, "")
+          c += 1
+          .Cells(r, c).Value = tmp.CostCenterID & IIf(tmp.CostCenterID <> "", tmp.FK_TA_Bills_CostCenterID.Description, "")
           c += 1
           .Cells(r, c).Value = tmp.FK_TA_Bills_TravelTypeID.TravelTypeDescription
           c += 1
@@ -87,6 +93,17 @@ Partial Class RP_TABillAuditReport
           .Cells(r, c).Value = IIf(tmp.DestinationCity <> "", tmp.FK_TA_Bills_DestinationCity.CityName, tmp.DestinationName)
           c += 1
           .Cells(r, c).Value = tmp.PurposeOfJourney.Replace(Chr(10), " ").Replace(Chr(13), " ").Replace(Chr(8), " ")
+          c += 1
+          .Cells(r, c).Value = tmp.VCHDocument
+          c += 1
+          .Cells(r, c).Value = tmp.VCHOn
+          c += 1
+          .Cells(r, c).Value = tmp.TotalPayableAmount
+          c += 1
+          .Cells(r, c).Value = tmp.TotalClaimedAmount
+          c += 1
+          .Cells(r, c).Value = tmp.TotalPassedAmount
+          c += 1
 
           Dim sTmps As List(Of SIS.TA.taBillDetails) = SIS.TA.taBillDetails.taBillDetailsSelectList(0, 999, "", False, "", tmp.TABillNo)
           '1.Fare
@@ -94,7 +111,7 @@ Partial Class RP_TABillAuditReport
           r = cbsr
           For Each stmp As SIS.TA.taBillDetails In sTmps
             If stmp.ComponentID <> TAComponentTypes.Fare Then Continue For
-            c = 11
+            c = 19
             .Cells(r, c).Value = sn
             c += 1
             .Cells(r, c).Value = Convert.ToDateTime(stmp.Date1Time).ToString("dd/MM/yyyy")
@@ -125,7 +142,7 @@ Partial Class RP_TABillAuditReport
           r = cbsr
           For Each stmp As SIS.TA.taBillDetails In sTmps
             If stmp.ComponentID <> TAComponentTypes.Lodging Then Continue For
-            c = 22
+            c = 30
             .Cells(r, c).Value = sn
             c += 1
             .Cells(r, c).Value = IIf(stmp.City1ID <> "", stmp.FK_TA_BillDetails_City1ID.CityName, stmp.City1Text) & " " & stmp.City1Text
@@ -152,7 +169,7 @@ Partial Class RP_TABillAuditReport
           r = cbsr
           For Each stmp As SIS.TA.taBillDetails In sTmps
             If stmp.ComponentID <> TAComponentTypes.LC Then Continue For
-            c = 31
+            c = 39
             .Cells(r, c).Value = sn
             c += 1
             .Cells(r, c).Value = Convert.ToDateTime(stmp.Date1Time).ToString("dd/MM/yyyy")
@@ -173,7 +190,7 @@ Partial Class RP_TABillAuditReport
           r = cbsr
           For Each stmp As SIS.TA.taBillDetails In sTmps
             If stmp.ComponentID <> TAComponentTypes.DA Then Continue For
-            c = 37
+            c = 45
             .Cells(r, c).Value = sn
             c += 1
             .Cells(r, c).Value = Convert.ToDateTime(stmp.Date1Time).ToString("dd/MM/yyyy")
@@ -194,7 +211,7 @@ Partial Class RP_TABillAuditReport
           r = cbsr
           For Each stmp As SIS.TA.taBillDetails In sTmps
             If stmp.ComponentID <> TAComponentTypes.Expense Then Continue For
-            c = 43
+            c = 51
             .Cells(r, c).Value = sn
             c += 1
             .Cells(r, c).Value = Convert.ToDateTime(stmp.Date1Time).ToString("dd/MM/yyyy")
@@ -215,7 +232,7 @@ Partial Class RP_TABillAuditReport
           r = cbsr
           For Each stmp As SIS.TA.taBillDetails In sTmps
             If stmp.ComponentID <> TAComponentTypes.Mileage Then Continue For
-            c = 49
+            c = 57
             .Cells(r, c).Value = sn
             c += 1
             .Cells(r, c).Value = Convert.ToDateTime(stmp.Date1Time).ToString("dd/MM/yyyy")
@@ -233,13 +250,13 @@ Partial Class RP_TABillAuditReport
           If r > cbmr Then cbmr = r
 
 
-          .Cells(cbsr, 1, cbmr, 54).Style.Fill.PatternType = Style.ExcelFillStyle.Solid
+          .Cells(cbsr, 1, cbmr, 62).Style.Fill.PatternType = Style.ExcelFillStyle.Solid
           If cnt Mod 2 = 0 Then
-            .Cells(cbsr, 1, cbmr, 54).Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.AliceBlue)
+            .Cells(cbsr, 1, cbmr, 62).Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.AliceBlue)
           Else
-            .Cells(cbsr, 1, cbmr, 54).Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Bisque)
+            .Cells(cbsr, 1, cbmr, 62).Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Bisque)
           End If
-          .Cells(cbsr, 1, cbmr, 54).Style.Border.BorderAround(Style.ExcelBorderStyle.Thin)
+          .Cells(cbsr, 1, cbmr, 62).Style.Border.BorderAround(Style.ExcelBorderStyle.Thin)
 
           cnt += 1
           cbsr = cbmr
